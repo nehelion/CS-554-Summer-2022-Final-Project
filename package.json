@@ -1,23 +1,21 @@
 {
-  "name": "cs-554-summer-2022-final-project",
+  "name": "final",
   "version": "1.0.0",
-  "description": "Final Project for Web Prog 2 in Summer 2022",
-  "main": "app.js",
+  "description": "CS554 Final",
+  "main": "index.js",
   "scripts": {
-    "start": "node app.js"
+    "seed": "npm run seed --prefix server",
+    "server": "npm start --prefix server",
+    "client": "npm start --prefix client",
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "concurrently \"npm run server\" \"npm run client\"",
+    "client-install": "cd client && npm install",
+    "server-install": "cd server && npm install",
+    "install-all": "concurrently \"npm run server-install\" \"npm run client-install\""
   },
-  "repository": {
-    "type": "git",
-    "url": "git+https://github.com/nehelion/CS-554-Summer-2022-Final-Project.git"
-  },
-  "author": "Alexander Kulpin, Sai Harish Kumar Vitta, Yuheng Xiao",
-  "license": "ISC",
-  "bugs": {
-    "url": "https://github.com/nehelion/CS-554-Summer-2022-Final-Project/issues"
-  },
-  "homepage": "https://github.com/nehelion/CS-554-Summer-2022-Final-Project#readme",
+  "author": "Sai Harish Kumar Vitta, Alexander Kulpin, Yuheng Xiao",
+  "license": "MIT",
   "dependencies": {
-    "express": "^4.18.1",
-    "path": "^0.12.7"
+    "concurrently": "^5.2.0"
   }
 }
