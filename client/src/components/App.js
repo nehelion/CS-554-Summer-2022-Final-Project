@@ -1,17 +1,14 @@
 import React from 'react'
 import '../App.css';
-import Account from './Account';
+
 import {BrowserRouter as Router,Route, Routes} from 'react-router-dom'
 import Landing from './Landing'
 import Navigation from './Navigation';
 import SignIn from './SignIn'
 import SignUp from './SignUp'
-import ShoppingCart from './ShoppingCart';
-import CandyList from './CandyList'
-import Candy from './Candy';
+import SignOut from './SignOut'
 
 import {AuthProvider} from "../firebase/Auth"
-import PrivateRoute from './PrivateRoute';
 function App() {
   return (
     <AuthProvider>
@@ -23,17 +20,9 @@ function App() {
       </div>
       <Routes>
         <Route path='/' element={<Landing />} />
-        <Route path='/CS554-Final_Project' element={<Landing />} />
-        
-        <Route path='/shoppingcart' element={<ShoppingCart />}></Route>
-        <Route path='/account' element={<PrivateRoute />}>
-        <Route path='/account' element={<Account />} />
-        </Route>
         <Route path='/signin' element={<SignIn />} />
         <Route path='/signup' element={<SignUp />} />
-        <Route path= '/Candies' element={<CandyList/>} />
-        <Route path= '/Candies/:searchTerm' element={<CandyList/>} />
-        <Route path= '/Candy/:id' element={<Candy/>} />
+        <Route path='/signout' element={<SignOut />} />
       </Routes>
     </Router>
   </AuthProvider>
