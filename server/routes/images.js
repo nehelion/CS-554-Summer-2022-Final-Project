@@ -4,31 +4,31 @@ const imagesData = require('../data/images');
 let { ObjectId } = require('mongodb');
 const xss = require('xss');
 
-router.post('/images/addNewApprovedImages', async (req,res) =>{
+router.post('/addNewApprovedImages', async (req,res) =>{
 
 });
 
-router.get('/images/getAllApprovedImages', async (req,res) =>{
+router.get('/getAllApprovedImages', async (req,res) =>{
 
 });
 
-router.get('/images/getApprovedImageByImageId', async (req,res) =>{
+router.get('/getApprovedImageByImageId', async (req,res) =>{
 
 });
 
-router.get('/images/getApprovedImageByUserId', async (req,res) =>{
+router.get('/getApprovedImageByUserId', async (req,res) =>{
 
 });
 
-router.get('/images/getApprovedImageByUserId', async (req,res) =>{
+router.get('/getApprovedImageByUserId', async (req,res) =>{
 
 });
 
-router.post('/images/editApprovedImageByImageId', async (req,res) =>{
+router.post('/editApprovedImageByImageId', async (req,res) =>{
 
 });
 
-router.post('/images/deleteApprovedImageByImageId', async (req,res) =>{
+router.post('/deleteApprovedImageByImageId', async (req,res) =>{
 
 });
 
