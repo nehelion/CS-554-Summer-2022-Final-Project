@@ -9,15 +9,15 @@ router.get('/getAllApprovedImages', async (req,res) =>{
 
 });
 
-router.get('/getUnapprovedImageByImageId', async (req,res) =>{
+router.get('/getUnapprovedImageByImageId/:id', async (req,res) =>{
 
 });
 
-router.post('/approveImageByImageId', async (req,res) =>{
+router.post('/approveImageByImageId/:id', async (req,res) =>{
 
 });
 
-router.post('/deleteUnapprovedImageByImageId', async (req,res) =>{
+router.post('/deleteUnapprovedImageByImageId/:id', async (req,res) =>{
 
 });
 
