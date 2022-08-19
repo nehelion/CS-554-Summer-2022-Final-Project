@@ -2,12 +2,13 @@ import firebase from 'firebase/app';
 import 'firebase/auth';
 
 const firebaseApp = firebase.initializeApp({
-  apiKey: "AIzaSyBz0mn92VagynSWDAwd0rvKPr8uZDfMupw",
-  authDomain: "candyshop-3a788.firebaseapp.com",
-  projectId: "candyshop-3a788",
-  storageBucket: "candyshop-3a788.appspot.com",
-  messagingSenderId: "864697354101",
-  appId: "1:864697354101:web:33f7616b94842042f8f53c"
+  apiKey: "AIzaSyCuJDTrdnIR9GPVGl85Cey6FdmLSJE58GU",
+  authDomain: "cs554-6d42e.firebaseapp.com",
+  projectId: "cs554-6d42e",
+  storageBucket: "cs554-6d42e.appspot.com",
+  messagingSenderId: "123557429358",
+  appId: "1:123557429358:web:2168f502f90f19a24f667f",
+  measurementId: "G-82V7GJJP66"
 });
 
 export default firebaseApp;
