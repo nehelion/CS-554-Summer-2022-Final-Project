@@ -7,7 +7,7 @@
     "test": "echo \"Error: no test specified\" && exit 1",
     "start": "node App.js"
   },
-  "author": "Qingyuan Liu 20007373",
+  "author": "",
   "license": "MIT",
   "dependencies": {
     "axios": "^0.26.1",
