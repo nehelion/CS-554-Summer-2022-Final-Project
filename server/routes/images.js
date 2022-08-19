@@ -12,23 +12,23 @@ router.get('/getAllApprovedImages', async (req,res) =>{
 
 });
 
-router.get('/getApprovedImageByImageId', async (req,res) =>{
+router.get('/getApprovedImageByImageId/:id', async (req,res) =>{
 
 });
 
-router.get('/getApprovedImageByUserId', async (req,res) =>{
+router.get('/getApprovedImageByUserId/:id', async (req,res) =>{
 
 });
 
-router.get('/getApprovedImageByUserId', async (req,res) =>{
+router.get('/getApprovedImageByUserId/:id', async (req,res) =>{
 
 });
 
-router.post('/editApprovedImageByImageId', async (req,res) =>{
+router.post('/editApprovedImageByImageId/:id', async (req,res) =>{
 
 });
 
-router.post('/deleteApprovedImageByImageId', async (req,res) =>{
+router.post('/deleteApprovedImageByImageId/:id', async (req,res) =>{
 
 });
 
