@@ -12,15 +12,15 @@ router.post('/checkUserPassword', async (req,res) =>{
 
 });
 
-router.post('/checkAdminFlag', async (req,res) =>{
+router.post('/checkAdminFlagByid/:id', async (req,res) =>{
 
 });
 
-router.get('/getUserById', async (req,res) =>{
+router.get('/getUserById/:id', async (req,res) =>{
 
 });
 
-router.post('/deleteUser', async (req,res) =>{
+router.post('/deleteUserByid/:id', async (req,res) =>{
 
 });
 
