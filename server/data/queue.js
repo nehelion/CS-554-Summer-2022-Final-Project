@@ -15,7 +15,7 @@ async function getUnapprovedImageByUserId() {
 }
 
 // Approving new image by deleting it from queue-database and adding it to images-datavase:
-async function approveUnapprovedImageByImageId() {
+async function approveImageByImageId() {
 
 }
 
@@ -28,6 +28,6 @@ module.exports = {
     getAllUnapprovedImages,
     getUnapprovedImageByImageId,
     getUnapprovedImageByUserId,
-    approveUnapprovedImageByImageId,
+    approveImageByImageId,
     deleteUnapprovedImageByImageId
 }
