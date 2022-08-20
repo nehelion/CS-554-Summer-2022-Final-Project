@@ -6,7 +6,7 @@ import '../Image.css';
 
 const ApprovedImage = () =>{
   const {currentUser} = useContext(AuthContext);
-  const [imageInfo, setImageInfo] = useState(undefined)
+  const [imageInfo, setImageInfo] = useState(false)
   const [editable, setEditable] = useState(false)
 //   const [candyHave, setCandyHave] = useState(0)
 //   const [candyStock, setCandyStock] = useState(0)
