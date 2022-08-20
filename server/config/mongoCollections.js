@@ -16,6 +16,5 @@ const getCollectionFn = (collection) => {
 
 module.exports = {
   UsersData: getCollectionFn('UsersData'),
-  ImagesData: getCollectionFn('ImagesData'),
-  QueueData: getCollectionFn('QueueData')
+  ImagesData: getCollectionFn('ImagesData')
 };
