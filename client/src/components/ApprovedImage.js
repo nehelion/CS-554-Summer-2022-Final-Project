@@ -295,7 +295,7 @@ const ApprovedImage = () =>{
 
                 <button onClick={deleteImage}>Delete Image</button>
             </div>)}
-            <p><b>Reviews: </b></p>
+            {/* <p><b>Reviews: </b></p> */}
             {/* <ul id="reviewList">
               {notBlank.map(e=>
                 <li key={e.email}>
