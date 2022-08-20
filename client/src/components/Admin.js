@@ -68,7 +68,7 @@ const Admin = () =>{
   const deleteImage = async()=>{
     try{
       await axios.post('http://localhost:3001/deleteImageByImageId/' + imageInfo._id,{
-        _Id: imageId,
+        _Id: imageInfo._id,
       });
     } catch(e){
       alert(e);
