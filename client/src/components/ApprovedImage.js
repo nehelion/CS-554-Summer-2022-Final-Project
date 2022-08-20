@@ -49,7 +49,7 @@ const ApprovedImage = () =>{
         //   }
         // }
         setLoading(false);
-        if (imageInfo == false){
+        if (!imageInfo ||  imageInfo === false){
             throw "Image has been deleted or can't find!";
         }
       } catch (e) {
