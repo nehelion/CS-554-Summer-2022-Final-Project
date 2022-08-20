@@ -58,7 +58,7 @@ const ApprovedImagesList = () =>{
         setLoading(true);
         setError(false);
         const {data} = await axios.get('http://localhost:3001/getAllUnapprovedImages');
-        if (data.length == 0){
+        if (data.length === 0){
             throw "ImagesList is Empty!"
         }
         setImageData(data);
