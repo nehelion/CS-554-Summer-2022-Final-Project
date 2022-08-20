@@ -1,11 +1,13 @@
 const dbConnection = require("./mongoConnection");
 
-
-const getCollectionFn = (collection) => {
+const getCollectionFn = (collection) => 
+{
   let _col = undefined;
 
-  return async () => {
-    if (!_col) {
+  return async () => 
+  {
+    if (!_col) 
+	{
       const db = await dbConnection.connectToDb();
       _col = await db.collection(collection);
     }
@@ -14,7 +16,8 @@ const getCollectionFn = (collection) => {
   };
 };
 
-module.exports = {
+module.exports = 
+{
   UsersData: getCollectionFn('UsersData'),
   ImagesData: getCollectionFn('ImagesData')
 };

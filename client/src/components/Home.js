@@ -60,7 +60,6 @@ const Home = () => {
 			logger: m => console.log(m) 
 		}).then(({ data: { text } }) => 
 		{
-			console.log(text);
 			setFileText(text);
 			//var parsedTextObj = parseInfo(text);
 			//console.log(JSON.stringify(parsedTextObj));
@@ -70,18 +69,43 @@ const Home = () => {
     setSelectedFile(URL.createObjectURL(file));
   };
 	
+	const uploadText = async (e) => {
+    console.log("GOING IN: ", fileText);
+		var jsonData = JSON.stringify({"text": fileText});
+		var formData = new FormData();
+    formData.append('json1', JSON.stringify(jsonData));
+		console.log("GOING IN 2: ", JSON.stringify(jsonData));
+		
+		fetch('http://localhost:3001/images/setImage/', 
+		{
+      method: 'POST', 
+			headers: {
+				'Accept': 'application/json',
+				'Content-Type': 'application/json',
+			},
+      mode: 'cors', 
+      body: jsonData
+
+    })
+  };
+	
 	return (
-		<div>
+		<form>
 			<input type="file" onChange={onImageChange} />
 			
 			<br />
       
 			<img src={selectedFile} alt="" />
 			
+			<br />
+      
+			<label id="image-text">{fileText}</label>
 			
+			<br />
+			<br />
 			
-			<label>{fileText}</label>
-		</div>
+			<button className="submit_button" type="submit" onClick={uploadText}>Submit</button>
+		</form>
   );
 };
 

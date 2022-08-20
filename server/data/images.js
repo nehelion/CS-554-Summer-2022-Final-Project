@@ -1,6 +1,26 @@
-const mongoCollections = require("../config/mongoCollections");
-const ImagesDataInfo = mongoCollections.ImagesData;
+const mongoCollections = require("./../config/mongoCollections");
+const images = mongoCollections.ImagesData;
 const { ObjectId } = require('mongodb');
+
+async function setImage(text) {
+	console.log(text);
+	
+  const imagesCollection = await images();
+	console.log("here 1");
+	
+	let newImage = 
+	{
+    text: text,
+    approved: false
+  }
+	console.log("here 2");
+  const insertDetails = await imagesCollection.insertOne(newImage);
+  if (insertDetails.insertedCount === 0) throw "Could not add image, try again!"
+	
+	console.log("here 3");
+	
+  return {taskInserted: true};
+}
 
 async function getAllUnapprovedImages() {
 
@@ -33,6 +53,7 @@ async function deleteImageByImageId() {
 }
 
 module.exports = {
+		setImage,
     getAllUnapprovedImages,
     approveImageByImageId,
     getAllApprovedImages,
