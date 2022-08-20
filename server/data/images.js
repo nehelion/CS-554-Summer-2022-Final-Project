@@ -2,7 +2,12 @@ const mongoCollections = require("../config/mongoCollections");
 const ImagesDataInfo = mongoCollections.ImagesData;
 const { ObjectId } = require('mongodb');
 
-async function addNewApprovedImages() {
+async function getAllUnapprovedImages() {
+
+}
+
+// Approving unapproved Images by updating its "Approval field" to True
+async function approveImageByImageId() {
 
 }
 
@@ -10,28 +15,29 @@ async function getAllApprovedImages() {
 
 }
 
-async function getApprovedImageByImageId() {
+async function getImageByImageId() {
 
 }
 
-async function getApprovedImageByUserId() {
+async function getImageByUserId() {
 
 }
 
-async function editApprovedImageByImageId() {
+async function editImageByImageId() {
 
 }
 
 
-async function deleteApprovedImageByImageId() {
+async function deleteImageByImageId() {
 
 }
 
 module.exports = {
-    addNewApprovedImages,
+    getAllUnapprovedImages,
+    approveImageByImageId,
     getAllApprovedImages,
-    getApprovedImageByImageId,
-    getApprovedImageByUserId,
-    editApprovedImageByImageId,
-    deleteApprovedImageByImageId
+    getImageByImageId,
+    getImageByUserId,
+    editImageByImageId,
+    deleteImageByImageId
 }
