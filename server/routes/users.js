@@ -8,10 +8,6 @@ router.post('/createUser', async (req,res) =>{
 
 });
 
-router.post('/checkUserPassword', async (req,res) =>{
-
-});
-
 router.post('/checkAdminFlagByid/:id', async (req,res) =>{
 
 });

@@ -6,10 +6,6 @@ async function createUser() {
 
 }
 
-async function checkUserPassword() {
-
-}
-
 async function checkAdminFlagByid() {
 
 }
@@ -25,7 +21,6 @@ async function deleteUserByid() {
 
 module.exports = {
     createUser,
-    checkUserPassword,
     checkAdminFlagByid,
     getUserById,
     deleteUserByid
