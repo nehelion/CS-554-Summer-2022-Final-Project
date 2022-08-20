@@ -22,8 +22,8 @@ const Navigation = () => {
         </NavLink>
         <div className='searchBar'>
         </div>
-        <NavLink className='weblink' to='/myPost'>
-          <i className="fa fa-user-circle" aria-hidden="true"></i>MyPost
+        <NavLink className='weblink' to='/home'>
+          <i className="fa fa-user-circle" aria-hidden="true"></i>Home
         </NavLink>
         <NavLink className='weblink' to='/admin'>
           <i className="fa fa-user-circle" aria-hidden="true"></i>Admin

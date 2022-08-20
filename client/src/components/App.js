@@ -7,6 +7,7 @@ import Navigation from './Navigation';
 import SignIn from './SignIn'
 import SignUp from './SignUp'
 import SignOut from './SignOut'
+import Home from './Home'
 
 import {AuthProvider} from "../firebase/Auth"
 function App() {
@@ -20,6 +21,7 @@ function App() {
       </div>
       <Routes>
         <Route path='/' element={<Landing />} />
+        <Route path='/home' element={<Home />} />
         <Route path='/signin' element={<SignIn />} />
         <Route path='/signup' element={<SignUp />} />
         <Route path='/signout' element={<SignOut />} />
