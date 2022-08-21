@@ -6,6 +6,10 @@ const path = require('path');
 const fs = require('fs');
 let { ObjectId } = require('mongodb');
 const xss = require('xss');
+const UnauthorizedRequest = require('../errors/UnAuthorizedRequest');
+const validations = require("../validations/validations");
+const UnprocessibleRequest = require('../errors/UnprocessibleRequest');
+const { deleteImageByImageId } = require('../data/images');
 
 router.post('/setImage', async (req,res) =>{
 	try 
@@ -26,44 +30,99 @@ router.post('/setImage', async (req,res) =>{
 });
 
 router.get('/getAllUnapprovedImages', async (req,res) =>{
-
+	try {
+		let unApprovedImages = await imagesData.getAllUnapprovedImages();
+		return res.status(200).json(unApprovedImages);
+	} catch(e) {
+		return res.status(500).json({"ERROR - getAllUnapprovedImages": e});
+	}
 });
 
 router.post('/approveImageByImageId/:id', async (req,res) =>{
+	let imageId = req.params['id'];
+	try {
+		imageId = validations.validateId(imageId, "Image Id");
+	} catch (e) {
+		return res.status(400).json({"ERROR - approveImageByImageId": e});
+	}
 
+	try {
+		let approvedImage = await imagesData.approveImageByImageId(imageId);
+		return res.status(200).json(approvedImage);
+	} catch(e) {
+		if(e instanceof UnprocessibleRequest)
+			return res.status(e.status).json({"ERROR - approveImageByImageId": e.message});
+		return res.status(500).json({"ERROR - approveImageByImageId": e});
+	}
 });
 
 router.get('/getAllApprovedImages', async (req,res) =>{
-	let dummyImages = [
-		{id: 1, name: "Image 1", text: "This is the text extracted from Image", url: "invalidImage.png"}, 
-		{id: 2, name: "Image 2", text: "This is the text extracted from Image", url: "sample.png"}
-	];
-	res.status(200).json(dummyImages);
+	try {
+		let approvedImages = await imagesData.getAllApprovedImages();
+		return res.status(200).json(approvedImages);
+	} catch(e) {
+		return res.status(500).json({"ERROR - getAllApprovedImages": e});
+	}
 });
 
 router.get('/searchImages', async (req, res) => {
 	let searchTerm = req.query.searchTerm;
-	console.log("search Images is hit with text " + searchTerm);
-	let dummyImages = [ 
-		{id: 2, name: "Image 2", text: "This is the text extracted from Image", url: "sample.png"}
-	];
-	res.status(200).json(dummyImages);
+	try {
+		searchTerm = validations.validateString(searchTerm, "Search Term");
+	} catch (e) {
+		return res.status(400).json({"ERROR - searchImages": e});
+	}
+
+	try {
+		let searchImages = await imagesData.getImagesWithText();
+		return res.status(200).json(searchImages);
+	} catch(e) {
+		return res.status(500).json({"ERROR - searchImages": e});
+	}
 });
 
 router.get('/getImageByUserId/:id', async (req,res) =>{
+	let userId = req.params['id'];
+	try {
+		userId = validations.validateId(userId, "Image Id");
+	} catch (e) {
+		return res.status(400).json({"ERROR - getImageByUserId": e});
+	}
 
+	try {
+		let imageObjects = await imagesData.getImagesByUserId(userId);
+		return res.status(200).json(imageObjects);
+	} catch(e) {
+		return res.status(500).json({"ERROR - getImageByUserId": e});
+	}
 });
 
+// Not sure if this is needed
 router.post('/editImageByImageId/:id', async (req,res) =>{
 
 });
 
-router.post('/deleteImageByImageId/:id', async (req,res) =>{
 
+router.post('/deleteImageByImageId/:id', async (req,res) =>{
+	let imageId = req.params['id'];
+	try {
+		imageId = validations.validateId(imageId, "Image Id");
+	} catch (e) {
+		return res.status(400).json({"ERROR - deleteImageByImageId": e});
+	}
+
+	try {
+		let deletedImage = await imagesData.deleteImageByImageId(imageId);
+		return res.status(200).json(deletedImage);
+	} catch(e) {
+		if(e instanceof UnprocessibleRequest)
+			return res.status(e.status).json({"ERROR - deleteImageByImageId": e.message});
+		return res.status(500).json({"ERROR - deleteImageByImageId": e});
+	}
 });
 
 /**
- * Get Image by Image Name
+ * Get Image by ImageLink
  */
 router.get('/:fileName', async (req,res) =>{
 	const fileName = req.params['fileName'];
