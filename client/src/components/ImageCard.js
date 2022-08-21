@@ -5,6 +5,7 @@ import {Link } from 'react-router-dom';
 import GET_IMAGE_DETAILS_URL_BY_ID from '../constants/constants';
 import {getCurrentUserName} from '../firebase/FirebaseFunctions';
 
+
 const useStyles = makeStyles({
     card: {
         maxWidth: 250,
