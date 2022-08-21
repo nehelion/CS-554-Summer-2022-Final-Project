@@ -25,7 +25,7 @@ function App() {
       </div>
       <Routes>
         <Route path='/' element={<Landing />} />
-        <Route path='/home' element={<Homecopy />} />
+        <Route path='/home' element={<Home />} />
         <Route path='/ApprovedImagesList' element={<ApprovedImagesList />} />
         <Route path='/ApprovedImage' element={<ApprovedImage />} />
         <Route path='/admin' element={<Admin />} />
