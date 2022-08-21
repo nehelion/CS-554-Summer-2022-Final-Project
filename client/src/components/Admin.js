@@ -34,6 +34,9 @@ const Admin = () =>{
             }
             const {data} = await axios.get('http://localhost:3001/getAllUnapprovedImages');
         }
+        if (data == null){
+          throw "No more images need to approve!"
+        }
       } catch (e) {
         console.log(e);
       }
