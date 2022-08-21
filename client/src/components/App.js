@@ -13,6 +13,7 @@ import ApprovedImage from './ApprovedImage'
 import Admin from './Admin'
 
 import {AuthProvider} from "../firebase/Auth"
+import RequireAuth from './RequiredAuth';
 function App() {
   return (
     <AuthProvider>
@@ -25,9 +26,9 @@ function App() {
       <Routes>
         <Route path='/' element={<Landing />} />
         <Route path='/home' element={<Home />} />
-        <Route path='/ApprovedImagesList' element={<ApprovedImagesList />} />
-        <Route path='/ApprovedImage' element={<ApprovedImage />} />
-        <Route path='/admin' element={<Admin />} />
+        <Route path='/ApprovedImagesList' element={<RequireAuth> <ApprovedImagesList /> </RequireAuth>} />
+        <Route path='/ApprovedImage' element={<RequireAuth> <ApprovedImage /> </RequireAuth>} />
+        <Route path='/admin' element={<RequireAuth> <Admin /></RequireAuth>} />
         <Route path='/signin' element={<SignIn />} />
         <Route path='/signup' element={<SignUp />} />
         <Route path='/signout' element={<SignOut />} />

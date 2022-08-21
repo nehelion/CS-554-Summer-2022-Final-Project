@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useContext } from "react";
 import { Grid, makeStyles } from '@material-ui/core';
 import {getCurrentUserName} from '../firebase/FirebaseFunctions';
 import axios from 'axios';
@@ -25,9 +25,8 @@ const ApprovedImagesList = () => {
 					const imagesResponse = await axios.get(URLS.GET_ALL_IMAGES_URL);
 					if(imagesResponse) {
 						let {data} = imagesResponse;
-						console.log("data extracted " + data);
 						setImages(data);
-					}
+					} 
 				} catch (e) {
 					console.log("Failed to retrieve the images from backend", e);
 					setImages([]);
@@ -67,20 +66,24 @@ const ApprovedImagesList = () => {
 	if(images.length !== 0) {
 		let imageCards = images.map(image => (<ImageCard image={image} key={image.id} />));
 		return (
-			<Grid container style={{width: '80%', margin: '0 auto'}}>
-				<Grid item xs={2} className='uploadImageForm'>
-					<form onSubmit={fileUploadHandler}>
-						<input type="text" name="imageName" onChange={event => console.log(event.target.value)} />
-						<input type="file" name="imageFile" onChange={event => console.log("File choosing")} />
-						<button type="submit"> Upload and Extract </button>
-					</form>
-      			</Grid>
-				<Grid item xs={10} className='uploadImageForm'>
-					<Grid container className={classes.grid} spacing={3}>
-						{imageCards}
-					</Grid>
-				</Grid>
-			</Grid>
+      <div>
+        <Grid container className={classes.grid} spacing={3}>
+              {imageCards}
+        </Grid>
+      </div>
+
+			// <Grid container style={{width: '80%', margin: '0 auto'}}>
+			// 	<Grid item xs={2} className='uploadImageForm'>
+			// 		<form onSubmit={fileUploadHandler}>
+			// 			<input type="text" name="imageName" onChange={event => console.log(event.target.value)} />
+			// 			<input type="file" name="imageFile" onChange={event => console.log("File choosing")} />
+			// 			<button type="submit"> Upload and Extract </button>
+			// 		</form>
+      // 			</Grid>
+			// 	<Grid item xs={10} className='uploadImageForm'>
+					
+			// 	</Grid>
+			// </Grid>
 		);
 	} else {
 		return (

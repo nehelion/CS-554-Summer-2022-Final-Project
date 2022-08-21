@@ -2,7 +2,7 @@ import '../App.css';
 import React, {useEffect, useState } from "react";
 import { Card, CardActionArea, CardContent, CardMedia, Grid, Typography, makeStyles } from '@material-ui/core';
 import {Link } from 'react-router-dom';
-import GET_IMAGE_DETAILS_URL_BY_ID from '../constants/constants';
+import URLS from '../constants/constants';
 import {getCurrentUserName} from '../firebase/FirebaseFunctions';
 
 
@@ -69,14 +69,15 @@ const ImageCard = (props) => {
     }
 
     return(
-        <Grid item xs={12} sm={6} md={4} lg={4} xl={4} key={image.id}>
+        <Grid item xs={12} sm={6} md={4} lg={3} xl={2} key={image.id}>
+            {console.log(image.url)}
             <Card className={classes.card} variant='outlined'>
                 <CardActionArea>
-                    <Link to={`${GET_IMAGE_DETAILS_URL_BY_ID}/${image.id}`}>
+                    <Link to={`${URLS.GET_IMAGE_DETAILS_URL_BY_ID}/${image.id}`}>
                         <CardMedia
                             className={classes.media}
                             component='img'
-                            image={image.url} // TODO: image object should have url property
+                            image={`${URLS.GET_IMAGE_URL}/${image.url}`} // TODO: image object should have url property
                             alt="No Image"
                             title={image.name} // TODO: image object should have a name 
                         />
@@ -88,7 +89,7 @@ const ImageCard = (props) => {
                         gutterBottom
                         variant='h6'
                         component='h1'>
-                        <a href={`${GET_IMAGE_DETAILS_URL_BY_ID}/${image.id}`}>{image.name}</a>
+                        <a href={`${URLS.GET_IMAGE_DETAILS_URL_BY_ID}/${image.id}`}>{image.name}</a>
                         <p>{image.text}</p>
                     </Typography>
                     {
