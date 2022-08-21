@@ -1,7 +1,9 @@
 import React, {useContext} from 'react';
 import SocialSignIn from './SocialSignIn';
-import {Navigate} from 'react-router-dom'
-import {AuthContext} from '../firebase/Auth'
+import {Navigate} from 'react-router-dom';
+import {AuthContext} from '../firebase/Auth';
+import {Grid} from '@material-ui/core';
+import '../App.css';
 import { doSignInWithEmailAndPassword,doPasswordReset } from '../firebase/FirebaseFunctions';
 
 function SignIn(){
@@ -32,39 +34,24 @@ function SignIn(){
     }
     return (
         <div>
-        <h1>Log in</h1>
-        <form onSubmit={handleLogin}>
-          <div className='form-group'>
-            <label>
-              Email:
-              <input
-                className='form-control'
-                name='email'
-                id='email'
-                type='email'
-                placeholder='Email'
-                required
-              />
-            </label>
-          </div>
-          <div className='form-group'>
-            <label>
-              Password:
-              <input
-                className='form-control'
-                name='password'
-                type='password'
-                placeholder='Password'
-                autoComplete='off'
-                required
-              />
-            </label>
-          </div>
-          <button type='submit'>Log in</button>
-  
-          <button className='forgotPassword' onClick={passwordReset}>
-            Forgot Password
-          </button>
+          <h1>Log in</h1>
+          <form onSubmit={handleLogin}>
+            <Grid container>
+              <Grid item className='form-group' xs={12} sm={4}>
+                <label>
+                  Email: <input className='form-control' name='email' id='email' type='email' placeholder='Email' required />
+                </label>
+              </Grid>
+              <Grid item className='form-group' xs={12} sm={4}>
+                <label>
+                  Password: <input className='form-control' name='password' type='password'  placeholder='Password' autoComplete='off' required />
+                </label>
+              </Grid>
+              <Grid item className='form-group' xs={12} sm={12}>
+                <button type='submit'> Log in </button>
+                <button className='forgotPassword' onClick={passwordReset}> Forgot Password </button>
+              </Grid>
+            </Grid>
         </form>
   
         <br />

@@ -31,7 +31,7 @@ function App() {
         <Route path='/admin' element={<RequireAuth> <Admin /></RequireAuth>} />
         <Route path='/signin' element={<SignIn />} />
         <Route path='/signup' element={<SignUp />} />
-        <Route path='/signout' element={<SignOut />} />
+        <Route path='/signout' element={<RequireAuth><SignOut /></RequireAuth>} />
       </Routes>
     </Router>
   </AuthProvider>
