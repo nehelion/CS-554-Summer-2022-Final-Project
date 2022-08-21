@@ -29,7 +29,13 @@ router.post('/approveImageByImageId/:id', async (req,res) =>{
 });
 
 router.get('/getAllApprovedImages', async (req,res) =>{
-
+	try {
+		let x = await imagesData.getAllApprovedImages();
+		res.status(200).json(x);
+	} 
+	catch (e) {
+		throw e;
+	}
 });
 
 router.get('/getImageByImageId/:id', async (req,res) =>{

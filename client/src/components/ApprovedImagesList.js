@@ -152,7 +152,8 @@ const ApprovedImagesList = () =>{
   if (error){
     return (
       <div>
-        <h2>404 page not find</h2>
+        <h2>No images are approved!</h2>
+        <h2>Please go to Admin Page to approve some images~</h2>
       </div>
     )
   } else if(loading){

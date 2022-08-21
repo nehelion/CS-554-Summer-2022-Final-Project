@@ -31,7 +31,11 @@ async function approveImageByImageId() {
 }
 
 async function getAllApprovedImages() {
-
+  const imagesCollection = await images();
+  const approvedImagesList = await imagesCollection.find({approval: true}, {
+  }).toArray();
+  if (!approvedImagesList) throw 'No approved Images yet, you can go to Admin page to approve some images~';
+  return approvedImagesList;
 }
 
 async function getImageByImageId() {
