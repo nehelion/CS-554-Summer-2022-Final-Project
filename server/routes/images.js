@@ -37,24 +37,13 @@ router.get('/getAllApprovedImages', async (req,res) =>{
 	res.status(200).json(dummyImages);
 });
 
-/**
- * Get Image by Image Name
- */
-router.get('/:fileName', async (req,res) =>{
-	const fileName = req.params['fileName'];
-	const filePath = path.join(__dirname, '../images', fileName);
-	console.log("filename: " + filePath);
-	try {
-		if(fs.existsSync(filePath)) {
-			// File Exists. Return it
-			return res.status(200).sendFile(filePath);
-		} else {
-			// File not available
-			return res.status(400).json({"ERROR": "Image Not found in the server"});
-		}
-	} catch (e) {
-		return res.status(500).json({"ERROR": "Failed to send file"});
-	}
+router.get('/searchImages', async (req, res) => {
+	let searchTerm = req.query.searchTerm;
+	console.log("search Images is hit with text " + searchTerm);
+	let dummyImages = [ 
+		{id: 2, name: "Image 2", text: "This is the text extracted from Image", url: "sample.png"}
+	];
+	res.status(200).json(dummyImages);
 });
 
 router.get('/getImageByUserId/:id', async (req,res) =>{
@@ -67,6 +56,25 @@ router.post('/editImageByImageId/:id', async (req,res) =>{
 
 router.post('/deleteImageByImageId/:id', async (req,res) =>{
 
+});
+
+/**
+ * Get Image by Image Name
+ */
+router.get('/:fileName', async (req,res) =>{
+	const fileName = req.params['fileName'];
+	const filePath = path.join(__dirname, '../images', fileName);
+	try {
+		if(fs.existsSync(filePath)) {
+			// File Exists. Return it
+			return res.status(200).sendFile(filePath);
+		} else {
+			// File not available
+			return res.status(400).json({"ERROR": "Image Not found in the server"});
+		}
+	} catch (e) {
+		return res.status(500).json({"ERROR": "Failed to send file"});
+	}
 });
 
 

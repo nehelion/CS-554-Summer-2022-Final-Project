@@ -70,7 +70,6 @@ const ImageCard = (props) => {
 
     return(
         <Grid item xs={12} sm={6} md={4} lg={3} xl={2} key={image.id}>
-            {console.log(image.url)}
             <Card className={classes.card} variant='outlined'>
                 <CardActionArea>
                     <Link to={`${URLS.GET_IMAGE_DETAILS_URL_BY_ID}/${image.id}`}>
