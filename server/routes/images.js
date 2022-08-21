@@ -28,7 +28,11 @@ router.post('/approveImageByImageId/:id', async (req,res) =>{
 });
 
 router.get('/getAllApprovedImages', async (req,res) =>{
-
+	let dummyImages = [
+		{id: 1, name: "Image 1", text: "This is the text extracted from Image", url: "noimage"}, 
+		{id: 2, name: "Image 2", text: "This is the text extracted from Image", url: "noimage"}
+	];
+	res.status(200).json(dummyImages);
 });
 
 router.get('/getImageByImageId/:id', async (req,res) =>{
