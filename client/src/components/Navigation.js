@@ -22,8 +22,8 @@ const Navigation = () => {
         </NavLink>
         <div className='searchBar'>
         </div>
-        <NavLink className='weblink' to='/home'>
-          <i className="fa fa-user-circle" aria-hidden="true"></i>Home
+        <NavLink className='weblink' to='/UploadImage'>
+          <i className="fa fa-user-circle" aria-hidden="true"></i>Upload Image
         </NavLink>
         <NavLink className='weblink' to='/ApprovedImagesList'>
           <i className="fa fa-user-circle" aria-hidden="true"></i>Approved Images

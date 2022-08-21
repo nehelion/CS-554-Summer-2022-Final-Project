@@ -3,27 +3,22 @@ const images = mongoCollections.ImagesData;
 const { ObjectId } = require('mongodb');
 const uuid = require('uuid');
 
-async function setImage(text) {
-	console.log(text);
-	
-  const imagesCollection = await images();
-	console.log("here 1");
-	
-	let newImage = 
-	{
-    _id: uuid.v4(),
-		uploader: 'tempUserName',
-		image: 'https://imageio.forbes.com/specials-images/imageserve/dv424076/Boulder--Namibia--Africa/960x0.jpg?format=jpg&width=960',
+async function addUnapprovedImage(url, tag, text) {
+  if (!url || !tag || !text) throw 'Empty input!';
+  const newId = ObjectId();
+  let newImage = {
+    _id: newId,
+    url: url,
+    tag: tag,
     text: text,
-    approved: false
-  }
-	console.log("here 2");
-  const insertDetails = await imagesCollection.insertOne(newImage);
-  if (insertDetails.insertedCount === 0) throw "Could not add image, try again!"
-	
-	console.log("here 3");
-	
-  return {taskInserted: true};
+    approval: false,
+  };
+  const imagesCollection = await images();
+  const insertInfo = await imagesCollection.insertOne(newImage);
+  if (!insertInfo.acknowledged || !insertInfo.insertedId)
+  throw "Could not add image";
+  result = await imagesCollection.findOne(newImage);
+  return result;
 }
 
 async function getAllUnapprovedImages() {
@@ -57,7 +52,7 @@ async function deleteImageByImageId() {
 }
 
 module.exports = {
-		setImage,
+    addUnapprovedImage,
     getAllUnapprovedImages,
     approveImageByImageId,
     getAllApprovedImages,
