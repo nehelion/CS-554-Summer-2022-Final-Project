@@ -7,8 +7,7 @@ import Navigation from './Navigation';
 import SignIn from './SignIn'
 import SignUp from './SignUp'
 import SignOut from './SignOut'
-import Home from './Home'
-import Homecopy from './Homecopy';
+import Home from './Home';
 import ApprovedImagesList from './ApprovedImagesList'
 import ApprovedImage from './ApprovedImage'
 import Admin from './Admin'
@@ -25,7 +24,7 @@ function App() {
       </div>
       <Routes>
         <Route path='/' element={<Landing />} />
-        <Route path='/home' element={<Homecopy />} />
+        <Route path='/home' element={<Home />} />
         <Route path='/ApprovedImagesList' element={<ApprovedImagesList />} />
         <Route path='/ApprovedImage' element={<ApprovedImage />} />
         <Route path='/admin' element={<Admin />} />
