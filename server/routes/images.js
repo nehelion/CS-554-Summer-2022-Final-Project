@@ -10,8 +10,12 @@ const xss = require('xss');
 router.post('/setImage', async (req,res) =>{
 	try 
 	{
-		console.log("out", req.body);
-		const image = await imagesData.setImage(req.body.text);
+		console.log("out1");
+		
+		for (var p of req.body) {
+			console.log("out2", p);
+		}
+		//const image = await imagesData.setImage(req.body.text);
 		//console.log(image);
 		//res.json(image);
 	} 

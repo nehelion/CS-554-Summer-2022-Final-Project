@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+import axios from 'axios';
 var Tesseract = require('tesseract.js');
 var grid = require("gridfs-stream");
 var mongooseDrv = require("mongoose");
@@ -12,17 +13,6 @@ const Home = () => {
   const [selectedFile, setSelectedFile] = useState(null);
   const [fileText, setFileText] = useState("Empty");
 	
-  try
-	{
-		/*
-		
-		*/
-	}
-	catch (e) 
-	{
-		console.log("FAIL :" + e);
-	}
-	
 	const onImageChange = (e) => {
     const [file] = e.target.files;
 		
@@ -34,9 +24,6 @@ const Home = () => {
 		}).then(({ data: { text } }) => 
 		{
 			setFileText(text);
-			//var parsedTextObj = parseInfo(text);
-			//console.log(JSON.stringify(parsedTextObj));
-			//res.render('posts/hovmaps', {output: parsedTextObj, path: passedVariable.substr(7)});
 		})
 		
     setSelectedFile(URL.createObjectURL(file));
@@ -44,10 +31,7 @@ const Home = () => {
 	
 	const storage = multer.diskStorage(
 	{
-		destination: function(req, file, cb) 
-		{
-			cb(null, 'images/');
-		},
+		dest: './images/',
 
 		// By default, multer removes file extensions so let's add them back
 		filename: function(req, file, cb) 
@@ -64,30 +48,116 @@ const Home = () => {
 		}
 	});
 	
-	const uploadText = async (e) => {
-    console.log("GOING IN: ", fileText);
-		var jsonData = JSON.stringify({"text": fileText});
-		var formData = new FormData();
-    formData.append('json1', JSON.stringify(jsonData));
-		console.log("GOING IN 2: ", JSON.stringify(jsonData));
+	const upload = multer({
+			 storage: storage,
+			 limits:{fileSize: 1000000},
+		}).single("submitted_image");
+	
+
+	const uploadText = () => {
+    //console.log("GOING IN: ", fileText);
+		//var jsonData = JSON.stringify({"text": fileText});
 		
-		fetch('http://localhost:3001/images/setImage/', 
+    //formData.append('json1', JSON.stringify(jsonData));
+		//console.log("GOING IN 2: ", JSON.stringify(jsonData));
+		
+		/*
+		
+		const formData = new FormData();
+		const imagefile = document.querySelector('#submitted_image');
+		
+		await axios.post('images/', formData, {
+    headers: {
+      'Content-Type': 'multipart/form-data'
+				}
+		}).then((response) => 
+				{alert("The file is successfully uploaded");})
+		
+		
+		
+		
+    formData.append('submitted_image',this.state.file);
+    const config = {
+      headers: {
+        'content-type': 'multipart/form-data'
+      }
+    };
+		await axios.post("/images",{
+				 upload(req, res, (e) => {
+						console.log("Request ---", req.body);
+						console.log("Request file ---", req.file);
+						if(!e)
+							 return res.send(200).end();
+				 });
+			};)
+      .then((response) => 
+				{alert("The file is successfully uploaded");})
+			.catch((error) => {});
+		
+		.then((response) => {
+			
+			*/
+			
+		//const input = document.getElementById('submitted_image');
+
+		const data = new FormData();
+		data.append("file", selectedFile);
+		data.append("text", "alex");
+
+		for (var p of data) {
+			console.log("out2", p);
+		}
+		
+		alert("The file is successfully uploaded");
+
+		axios.post('http://localhost:3001/images/setImage', data)
+			.then((res) => {
+				alert("File Upload success");
+			})
+			.catch((err) => alert("File Upload Error"));
+
+
+/*
+		fetch('http://localhost:3001/images/setImage', 
 		{
-      method: 'POST', 
-			headers: {
-				'Accept': 'application/json',
-				'Content-Type': 'application/json',
-			},
+      method: 'POST',
       mode: 'cors', 
-      body: jsonData
-    });
+      body: data
+    })
+    .then(res => res.json())
+    .then(json => console.log(json))
+    .catch(err => console.error(err));
+		alert("The file is successfully uploaded");
+		*/
 		
-		let upload = multer({ storage: storage, fileFilter: helpers.imageFilter }).single('submitted_image');
+		
+		//let upload = multer({ storage: storage, fileFilter: helpers.imageFilter }).single('submitted_image');
   };
+	
+	
+	const onFileUpload = () => {
+    
+      // Create an object of formData
+      const formData = new FormData();
+    
+      // Update the formData object
+      formData.append(
+        "myFile",
+        this.state.selectedFile,
+        this.state.selectedFile.name
+      );
+    
+      // Details of the uploaded file
+      console.log(this.state.selectedFile);
+    
+      // Request made to the backend api
+      // Send formData object
+      axios.post("api/uploadfile", formData);
+    };
 	
 	return (
 		<form> 
-			<input id="submitted_image" type="file" onChange={onImageChange} />
+			<input id="submitted_image" name="submitted_image" type="file" onChange={onImageChange} />
 			
 			<br />
       
@@ -100,7 +170,7 @@ const Home = () => {
 			<br />
 			<br />
 			
-			<button className="submit_button" type="submit" onClick={uploadText}>Submit</button>
+			<button className="submit_button" onClick={uploadText}>Submit</button>
 		</form>
   );
 };
