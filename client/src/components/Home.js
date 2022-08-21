@@ -1,5 +1,7 @@
 import React, { useState } from "react";
 var Tesseract = require('tesseract.js');
+var grid = require("gridfs-stream");
+var mongooseDrv = require("mongoose");
 const helpers = require('./helpers');
 const multer = require('multer');
 const path = require('path');
@@ -13,36 +15,7 @@ const Home = () => {
   try
 	{
 		/*
-		let upload = multer({ storage: storage, fileFilter: helpers.imageFilter }).single('submitted_image');
 		
-		upload(req, res, function(err) 
-		{
-			if (req.fileValidationError) 
-			{
-				console.log("HERE 2.1");
-				// res.redirect('/hov');
-			}
-			else if (!req.file) 
-			{
-				console.log("HERE 2.2");
-				//res.redirect('/hov');
-			}
-			else if (err instanceof multer.MulterError) 
-			{
-				console.log("HERE 2.3");
-				//res.redirect('/hov');
-			}
-			else if (err) 
-			{
-				console.log("HERE 2.4");
-				//res.redirect('/hov');
-			}
-			res.redirect('/addweapons/jimp?valid=' + 
-				req.file.path + '$/' + 
-				req.body.submitted_scale_h + '$/' + 
-				req.body.submitted_scale_w + '$/' + 
-				req.body.submitted_brightness);
-		});
 		*/
 	}
 	catch (e) 
@@ -69,6 +42,28 @@ const Home = () => {
     setSelectedFile(URL.createObjectURL(file));
   };
 	
+	const storage = multer.diskStorage(
+	{
+		destination: function(req, file, cb) 
+		{
+			cb(null, 'images/');
+		},
+
+		// By default, multer removes file extensions so let's add them back
+		filename: function(req, file, cb) 
+		{
+			try
+			{
+				var newFileName = file.fieldname + '-' + Date.now() + path.extname(file.originalname);
+				cb(null, newFileName);
+			}
+			catch (e) 
+			{
+				console.log("FAIL :" + e);
+			}
+		}
+	});
+	
 	const uploadText = async (e) => {
     console.log("GOING IN: ", fileText);
 		var jsonData = JSON.stringify({"text": fileText});
@@ -85,13 +80,14 @@ const Home = () => {
 			},
       mode: 'cors', 
       body: jsonData
-
-    })
+    });
+		
+		let upload = multer({ storage: storage, fileFilter: helpers.imageFilter }).single('submitted_image');
   };
 	
 	return (
-		<form>
-			<input type="file" onChange={onImageChange} />
+		<form> 
+			<input id="submitted_image" type="file" onChange={onImageChange} />
 			
 			<br />
       
