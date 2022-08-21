@@ -1,8 +1,9 @@
 import '../App.css';
-import React, {useState } from "react";
+import React, {useEffect, useState } from "react";
 import { Card, CardActionArea, CardContent, CardMedia, Grid, Typography, makeStyles } from '@material-ui/core';
 import {Link } from 'react-router-dom';
 import GET_IMAGE_DETAILS_URL_BY_ID from '../constants/constants';
+import {getCurrentUserName} from '../firebase/FirebaseFunctions';
 
 const useStyles = makeStyles({
     card: {
@@ -43,6 +44,19 @@ const ImageCard = (props) => {
     const classes = useStyles();
     let image = props.image;
     let [editable, setEditable] = useState(false);
+    let amIOwner = false;
+
+    // only owner of the image is allowed to upload the text of the image
+    useEffect(()=> {
+        let checkIfImageCanBeEdited = async () => {
+            let loggedInUserName = await getCurrentUserName();
+            if(loggedInUserName === image.owner)
+                return true;
+            else 
+                return false;
+        }
+        amIOwner = checkIfImageCanBeEdited();
+    }, []);
 
     let updateTextHandler = (event) => {
         event.preventDefault();
@@ -54,7 +68,7 @@ const ImageCard = (props) => {
     }
 
     return(
-        <Grid item xs={12} sm={6} md={4} lg={3} xl={2} key={image.id}>
+        <Grid item xs={12} sm={6} md={4} lg={4} xl={4} key={image.id}>
             <Card className={classes.card} variant='outlined'>
                 <CardActionArea>
                     <Link to={`${GET_IMAGE_DETAILS_URL_BY_ID}/${image.id}`}>
@@ -76,9 +90,10 @@ const ImageCard = (props) => {
                         <a href={`${GET_IMAGE_DETAILS_URL_BY_ID}/${image.id}`}>{image.name}</a>
                         <p>{image.text}</p>
                     </Typography>
-
-                    <div className="edit">
-                        <button onClick={() => {setEditable(!editable)}}>{editable?"View":"Edit"}</button>
+                    {
+                        amIOwner && 
+                        <div className="edit">
+                        <button onClick={() => setEditable(!editable)}>{editable?"View":"Edit"}</button>
                         {
                             editable &&
                             <form onSubmit={updateTextHandler} >
@@ -86,8 +101,8 @@ const ImageCard = (props) => {
                                 <button type="submit"> Update Text </button>
                             </form>
                         }
-                        
-                    </div>
+                        </div>
+                    }
               </CardContent>
         </Card>
       </Grid>

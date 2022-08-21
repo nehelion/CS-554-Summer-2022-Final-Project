@@ -10,6 +10,7 @@
     "axios": "^0.27.2",
     "firebase": "^7.23.0",
     "gridfs-stream": "^1.1.1",
+    "fs": "^0.0.1-security",
     "jimp": "^0.16.1",
     "jspdf": "^2.5.1",
     "jspdf-autotable": "^3.5.23",
