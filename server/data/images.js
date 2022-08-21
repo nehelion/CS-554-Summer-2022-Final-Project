@@ -1,6 +1,7 @@
 const mongoCollections = require("./../config/mongoCollections");
 const images = mongoCollections.ImagesData;
 const { ObjectId } = require('mongodb');
+const uuid = require('uuid');
 
 async function setImage(text) {
 	console.log(text);
@@ -10,6 +11,9 @@ async function setImage(text) {
 	
 	let newImage = 
 	{
+    _id: uuid.v4(),
+		uploader: 'tempUserName',
+		image: 'https://imageio.forbes.com/specials-images/imageserve/dv424076/Boulder--Namibia--Africa/960x0.jpg?format=jpg&width=960',
     text: text,
     approved: false
   }
