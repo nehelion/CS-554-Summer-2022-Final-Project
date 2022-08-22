@@ -10,18 +10,29 @@ const UnauthorizedRequest = require('../errors/UnAuthorizedRequest');
 const validations = require("../validations/validations");
 const UnprocessibleRequest = require('../errors/UnprocessibleRequest');
 const { deleteImageByImageId } = require('../data/images');
+let multer = require('multer');
+const helpers = require('./helpers');
 
-router.post('/setImage', async (req,res) =>{
+var storage = multer.diskStorage({
+  destination: function(req, file, callback) {
+    callback(null, 'images/');
+  },
+  filename: function (req, file, callback) {
+    var newFileName = file.fieldname + '-' + Date.now() + path.extname(file.originalname);
+		callback(null, newFileName);
+  }
+});
+
+var upload = multer({ storage: storage }).single('file');
+
+router.post('/setImage', function (req,res) {
 	try 
 	{
-		console.log("out1");
-		
-		for (var p of req.body) {
-			console.log("out2", p);
-		}
-		//const image = await imagesData.setImage(req.body.text);
-		//console.log(image);
-		//res.json(image);
+		upload(req, res, function (err) {
+			if(err) {
+				res.status(400).send("Something went wrong!");
+			}
+		});
 	} 
 	catch (e) 
 	{
