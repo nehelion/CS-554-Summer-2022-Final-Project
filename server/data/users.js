@@ -6,8 +6,13 @@ async function createUser() {
 
 }
 
-async function checkAdminFlagByid() {
-
+async function checkAdminFlagByid(id) {
+    if (!id) throw 'no uid!'
+    if (id == 'LE6VJ8K3PnZjoJVd8btEIc4kT3d2'){
+        return true;
+    } else{
+        return false;
+    }
 }
 
 async function getUserById() {

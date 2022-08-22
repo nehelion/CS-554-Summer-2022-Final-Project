@@ -2,6 +2,7 @@ import React, {useState, useEffect,useContext} from 'react';
 import axios from 'axios';
 import {useParams } from "react-router-dom";
 import { AuthContext } from '../firebase/Auth';
+// import { getAuth } from "../firebase/auth";
 import '../Image.css';
 
 const Admin = () =>{
@@ -10,21 +11,30 @@ const Admin = () =>{
   const [editable, setEditable] = useState(true)
   const [ loading, setLoading ] = useState(true);
   const [ empty, setEmpty ] = useState(false);
+  const [ admin, setAdmin ] = useState(false);
 
   useEffect(() => {
     async function fetchData() {
       try {
+        // const auth = getAuth();
+        // const user = auth.currentUser;
+        if (currentUser){
+          const uid = JSON.stringif(currentUser.uid);
+          let admin = await axios.post('http://localhost:3001/users/checkAdminFlagByid', {
+            _id:uid
+          });
+          if (admin){
+             setAdmin(true);
+          } else{
+             setAdmin(false);
+          }
+        }
+
         const {data} = await axios.get('http://localhost:3001/images/getOneUnapprovedImage');
         if (data.length === 0){
           throw "No more images need to approve!"
         }
         setImageInfo(data)
-        // let admin = await axios.post('http://localhost:3001/checkAdminFlagByid/' + currentUser._id);
-        // if (admin){
-        //     setEditable(true);
-        // } else{
-        //     throw "You are not admin, you can't inspect images!"
-        // }
       } catch (e) {
         setEmpty(true)
         console.log(JSON.stringify(e.response.data));
@@ -54,7 +64,17 @@ const Admin = () =>{
     }
   }
   
-  if(empty){
+  if(!admin){
+    return (
+			<div>
+				<h2>Your are not admin!</h2>
+        <h2>Admin Account Email address:</h2>
+        <p>admin@test.com</p>
+        <h2>Admin Account Password:</h2>
+        <p>123456</p>
+			</div>
+		);
+  }else if(empty){
     return (
 			<div>
 				<h2>No more Image needs to approve...</h2>
