@@ -10,6 +10,7 @@ const UnauthorizedRequest = require('../errors/UnAuthorizedRequest');
 const validations = require("../validations/validations");
 const UnprocessibleRequest = require('../errors/UnprocessibleRequest');
 const { deleteImageByImageId } = require('../data/images');
+const multer = require('multer');
 
 router.post('/setImage', async (req,res) =>{
 	try 
@@ -140,5 +141,21 @@ router.get('/:fileName', async (req,res) =>{
 	}
 });
 
+
+var storage = multer.diskStorage({
+	destination: function (req, file, cb) {
+	  cb(null, '../images/')
+	},
+	filename: function (req, file, cb) {
+	  cb(null, file.fieldname)  // No changes to the file name
+	}
+});
+const upload = multer({ storage: storage })
+router.post("/", upload.single(), async(req, res) => {
+	if(req.files & req.body) {
+		let imageLink = req.files[0].fieldname;
+		
+	}
+});
 
 module.exports = router;
