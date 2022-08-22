@@ -18,11 +18,10 @@ var storage = multer.diskStorage({
     callback(null, 'images/');
   },
   filename: function (req, file, callback) {
-    var newFileName = file.fieldname + '-' + Date.now() + path.extname(file.originalname);
-		callback(null, newFileName);
+    var newFileName = file.originalname;
+	callback(null, newFileName);
   }
 });
-
 var upload = multer({ storage: storage }).single('file');
 
 router.post('/setImage', function (req,res) {
@@ -85,7 +84,7 @@ router.get('/searchImages', async (req, res) => {
 	}
 
 	try {
-		let searchImages = await imagesData.getImagesWithText();
+		let searchImages = await imagesData.getImagesWithText(searchTerm);
 		return res.status(200).json(searchImages);
 	} catch(e) {
 		return res.status(500).json({"ERROR - searchImages": e});
@@ -109,8 +108,22 @@ router.get('/getImageByUserId/:id', async (req,res) =>{
 });
 
 // Not sure if this is needed
-router.post('/editImageByImageId/:id', async (req,res) =>{
+router.post('/updateText/:id', async (req,res) =>{
+	let imageId = req.params['id'];
+	let updateText = req.body.updateText;
+	try {
+		imageId = validations.validateId(imageId, "Image Id");
+		updateText = validations.validateString(updateText, "Update Text");
+	} catch (e) {
+		return res.status(400).json({"ERROR - updateText": e});
+	}
 
+	try {
+		let updatedImage = await imagesData.updateTextbyImageId(imageId, updateText);
+		return res.status(200).json(updatedImage);
+	} catch(e) {
+		return res.status(500).json({"ERROR - updateText": e});
+	}
 });
 
 

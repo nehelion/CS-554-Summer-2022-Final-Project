@@ -4,6 +4,7 @@ import { Card, CardActionArea, CardContent, CardMedia, Grid, Typography, makeSty
 import {Link } from 'react-router-dom';
 import URLS from '../constants/constants';
 import {getCurrentUserName} from '../firebase/FirebaseFunctions';
+import axios from 'axios';
 
 
 const useStyles = makeStyles({
@@ -45,40 +46,58 @@ const ImageCard = (props) => {
     const classes = useStyles();
     let image = props.image;
     let [editable, setEditable] = useState(false);
-    let amIOwner = false;
+    let [amIOwner, setAmIOwner] = useState(false);
+    let [textExtracted, setTextExtracted] = useState("");
 
     // only owner of the image is allowed to upload the text of the image
     useEffect(()=> {
         let checkIfImageCanBeEdited = async () => {
             let loggedInUserName = await getCurrentUserName();
-            if(loggedInUserName === image.owner)
-                return true;
+            if(loggedInUserName === image.ownerMail) {
+                console.log("Test passed");
+                setAmIOwner(true);
+            }
             else 
-                return false;
+                setAmIOwner(false);
         }
-        amIOwner = checkIfImageCanBeEdited();
+        checkIfImageCanBeEdited();
     }, []);
+
+    let sendBackendCall = async (updateText) => {
+        try {
+            let requestConfig = {
+                    updateText: updateText
+            }
+            let ans = await axios.post(`${URLS.UPDATE_TEXT_BY_IMAGE_ID}/${image._id}`, requestConfig);
+            console.log("Updated Text updated in backend");
+            image.textExtracted = updateText;
+            setTextExtracted(image.textExtracted);
+        } catch(e) {
+            console.log("Failed to update Text for this Image", e);
+        }
+    };
 
     let updateTextHandler = (event) => {
         event.preventDefault();
         let text = event.target.imageText.value;
-        image.text = text;
+        // image.text = text;
         console.log("value updating to " + text);
         // TODO: need to send the update to backend before re-render this card with new Image Data
+        sendBackendCall(text);
         setEditable(false);
     }
 
     return(
-        <Grid item xs={12} sm={6} md={4} lg={3} xl={2} key={image.id}>
+        <Grid item xs={12} sm={6} md={4} lg={3} xl={2} key={image._id}>
             <Card className={classes.card} variant='outlined'>
                 <CardActionArea>
-                    <Link to={`${URLS.GET_IMAGE_DETAILS_URL_BY_ID}/${image.id}`}>
+                    <Link to={`${URLS.GET_IMAGE_DETAILS_URL_BY_ID}/${image._id}`}>
                         <CardMedia
                             className={classes.media}
                             component='img'
-                            image={`${URLS.GET_IMAGE_URL}/${image.url}`} // TODO: image object should have url property
+                            image={`${URLS.GET_IMAGE_URL}/${image.imageLink}`} // TODO: image object should have url property
                             alt="No Image"
-                            title={image.name} // TODO: image object should have a name 
+                            title={image.imageLink} // TODO: image object should have a name 
                         />
                     </Link>
                 </CardActionArea>
@@ -88,17 +107,17 @@ const ImageCard = (props) => {
                         gutterBottom
                         variant='h6'
                         component='h1'>
-                        <a href={`${URLS.GET_IMAGE_DETAILS_URL_BY_ID}/${image.id}`}>{image.name}</a>
-                        <p>{image.text}</p>
+                        <a href={`${URLS.GET_IMAGE_DETAILS_URL_BY_ID}/${image._id}`}>{image.imageLink}</a>
+                        <p>{image.textExtracted}</p>
                     </Typography>
                     {
-                        amIOwner && 
+                        amIOwner &&
                         <div className="edit">
                         <button onClick={() => setEditable(!editable)}>{editable?"View":"Edit"}</button>
                         {
                             editable &&
                             <form onSubmit={updateTextHandler} >
-                                <input type="text" name="imageText" defaultValue={image.text}/>
+                                <input type="text" name="imageText" defaultValue={image.textExtracted}/>
                                 <button type="submit"> Update Text </button>
                             </form>
                         }

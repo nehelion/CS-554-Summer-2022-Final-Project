@@ -163,11 +163,11 @@ const approveImageByImageId = async (imageId) => {
  */
 const updateTextbyImageId = async (imageId, updatedText) => {
   imageId = validations.validateId(imageId, "Image Id");
-  updatedText = validations.validateString(upatedText, "New Extracted Text");
+  updatedText = validations.validateString(updatedText, "New Extracted Text");
   const imagesCollection = await getImagesCollection();
   let {value : updatedImage} = await imagesCollection.findOneAndUpdate(
     { _id:  imageId},
-    { text: updatedText},
+    { $set: {textExtracted: updatedText}},
     { upsert: false, returnNewDocument: true, returnDocument: 'after' }
   );
 

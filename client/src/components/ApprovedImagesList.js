@@ -93,9 +93,9 @@ const ApprovedImagesList = () => {
 
 	let imageCards = null;
 	if(searchImages) {
-		imageCards = searchImages.map(image => (<ImageCard image={image} key={image.id} />));
+		imageCards = searchImages.map(image => (<ImageCard image={image} key={image._id} />));
 	} else if (images) {
-		imageCards = images.map(image => (<ImageCard image={image} key={image.id} />));
+		imageCards = images.map(image => (<ImageCard image={image} key={image._id} />));
 	}
 
 	if(loading) {
@@ -112,7 +112,7 @@ const ApprovedImagesList = () => {
 				</Grid>
 				<Grid item xs={2} md={10} lg={10} className='images'>
 					<Grid container className={classes.grid} spacing={3}>
-						{imageCards}
+						{(imageCards.length > 0 )? imageCards : <h4> No Images to Display</h4>}
 					</Grid>
 				</Grid>
       		</Grid>
