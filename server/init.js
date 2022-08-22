@@ -48,7 +48,7 @@ async function init() {
     await imagesData.addUnapprovedImage(
      "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcST_Jq_yCIItqgjpisxsWIg2iVdLFMkrVmZHA&usqp=CAU",
      "Doggie",
-     "I am a puppy and i'm naughty, you better not approve me~"
+     "I am a naughty puppy, you better not approve me~"
     );
   } catch(e){
     alert(e)
