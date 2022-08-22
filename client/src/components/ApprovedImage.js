@@ -12,6 +12,13 @@ const ApprovedImage = () =>{
   const [loading, setLoading ] = useState(true);
   const [deleted, setDeleted ] = useState(false);
 
+  let admin = false
+
+  const uid = currentUser.uid;
+  if (uid === 'LE6VJ8K3PnZjoJVd8btEIc4kT3d2'){
+    admin = true;
+  }
+
   const params = useParams();
   let imageId = params.id
 
@@ -103,7 +110,7 @@ const ApprovedImage = () =>{
               </div>
             </div>
             
-            {editable && (<div id="newReview">
+            {admin && (<div id="newReview">
               <div className='review-input'>
                 <h3>Edit Image:</h3>
                   <label htmlFor ="edit">
@@ -119,7 +126,7 @@ const ApprovedImage = () =>{
               <button onClick={updateImageText}> Write a new Text</button>
             </div>)}
 
-            {editable&&(<div id="userReview">
+            {admin&&(<div id="userReview">
                 <button onClick={deleteImage}>Delete Image</button>
             </div>)}
           </div>

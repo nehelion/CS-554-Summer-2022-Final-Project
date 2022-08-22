@@ -18,7 +18,7 @@ router.post('/checkAdminFlagByid', async (req,res) =>{
 		return x;
 	} 
 	catch (e) {
-		res.status(500).json({"1":e});
+		res.status(500).json({"2":e});
 	}
 });
 

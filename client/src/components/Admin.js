@@ -11,24 +11,27 @@ const Admin = () =>{
   const [editable, setEditable] = useState(true)
   const [ loading, setLoading ] = useState(true);
   const [ empty, setEmpty ] = useState(false);
-  const [ admin, setAdmin ] = useState(false);
+  let admin = false
+
+  const uid = currentUser.uid;
+  if (uid === 'LE6VJ8K3PnZjoJVd8btEIc4kT3d2'){
+    admin = true;
+  }
 
   useEffect(() => {
     async function fetchData() {
       try {
-        // const auth = getAuth();
-        // const user = auth.currentUser;
-        if (currentUser){
-          const uid = JSON.stringif(currentUser.uid);
-          let admin = await axios.post('http://localhost:3001/users/checkAdminFlagByid', {
-            _id:uid
-          });
-          if (admin){
-             setAdmin(true);
-          } else{
-             setAdmin(false);
-          }
-        }
+        // if (currentUser){
+        //   const uid = JSON.stringif(currentUser.uid);
+        //   // let admin = await axios.post('http://localhost:3001/users/checkAdminFlagByid', {
+        //   //   _id:uid
+        //   // });
+        //   if (uid == 'LE6VJ8K3PnZjoJVd8btEIc4kT3d2'){
+        //      setAdmin(true);
+        //   } else{
+        //      setAdmin(false);
+        //   }
+        // }
 
         const {data} = await axios.get('http://localhost:3001/images/getOneUnapprovedImage');
         if (data.length === 0){
