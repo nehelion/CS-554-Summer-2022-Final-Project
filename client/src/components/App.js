@@ -26,7 +26,7 @@ function App() {
         <Route path='/' element={<Landing />} />
         <Route path='/UploadImage' element={<UploadImage />} />
         <Route path='/ApprovedImagesList' element={<ApprovedImagesList />} />
-        <Route path='/ApprovedImage' element={<ApprovedImage />} />
+        <Route path='/ApprovedImage/:id' element={<ApprovedImage />} />
         <Route path='/admin' element={<Admin />} />
         <Route path='/signin' element={<SignIn />} />
         <Route path='/signup' element={<SignUp />} />
