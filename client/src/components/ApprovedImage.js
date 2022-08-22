@@ -78,7 +78,7 @@ const ApprovedImage = () =>{
   } else if(error){
     return (
 			<div>
-				<h2>EORROR!</h2>
+				<h2>Image has been deleted!</h2>
 			</div>
 		);
   } else{
@@ -119,9 +119,9 @@ const ApprovedImage = () =>{
               <button onClick={updateImageText}> Write a new Text</button>
             </div>)}
 
-            {/* {editable&&(<div id="userReview">
+            {editable&&(<div id="userReview">
                 <button onClick={deleteImage}>Delete Image</button>
-            </div>)} */}
+            </div>)}
           </div>
         </div>
       )

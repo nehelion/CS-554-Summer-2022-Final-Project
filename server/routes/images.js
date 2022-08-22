@@ -16,16 +16,41 @@ router.post('/addUnapprovedImage', async (req,res) =>{
 		res.status(200).json({"Successful":"Successful"});
 	} 
 	catch (e) {
-		throw e;
+		res.status(500).json({"1":e});
 	}
 });
 
 router.get('/getAllUnapprovedImages', async (req,res) =>{
-
+	try {
+		let x = await imagesData.getAllUnapprovedImages();
+		res.status(200).json(x);
+	} 
+	catch (e) {
+		res.status(500).json({"1":e});
+	}
 });
 
-router.post('/approveImageByImageId/:id', async (req,res) =>{
+router.get('/getOneUnapprovedImage', async (req,res) =>{
+	try {
+		let x = await imagesData.getOneUnapprovedImage();
+		res.status(200).json(x);
+	} 
+	catch (e) {
+		res.status(500).json({"1":e});
+	}
+});
 
+router.post('/approveImageByImageId', async (req,res) =>{
+	try {
+		var body = req.body;
+		if (!body._id) throw 'Empty approve input!';
+		const id = xss(body._id);
+		let x = await imagesData.approveImageByImageId(id);
+		res.status(200).json(x);
+	} 
+	catch (e) {
+		res.status(500).json({"1":e});
+	}
 });
 
 router.get('/getAllApprovedImages', async (req,res) =>{
@@ -34,7 +59,7 @@ router.get('/getAllApprovedImages', async (req,res) =>{
 		res.status(200).json(x);
 	} 
 	catch (e) {
-		throw e;
+		res.status(500).json({"1":e});
 	}
 });
 
@@ -46,7 +71,7 @@ router.get('/getImageByImageId/:id', async (req,res) =>{
 		res.status(200).json(x);
 	} 
 	catch (e) {
-		throw e;
+		res.status(500).json({"1":e});
 	}
 });
 

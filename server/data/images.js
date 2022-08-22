@@ -22,12 +22,40 @@ async function addUnapprovedImage(url, tag, text) {
 }
 
 async function getAllUnapprovedImages() {
+  const imagesCollection = await images();
+  const unapprovedImagesList = await imagesCollection.find({approval: false}, {
+  }).toArray();
+  if (!unapprovedImagesList) throw 'No approved Images yet, you can go to Admin page to approve some images~';
+  return unapprovedImagesList;
+}
 
+async function getOneUnapprovedImage() {
+  const imagesCollection = await images();
+  const unapprovedImage = await imagesCollection.findOne({approval: false});
+  if (!unapprovedImage) throw 'No approved Images yet, you can go to Admin page to approve some images~';
+  return unapprovedImage;
 }
 
 // Approving unapproved Images by updating its "Approval field" to True
-async function approveImageByImageId() {
-
+async function approveImageByImageId(id) {
+  if (!id) throw "No id to arppove!";
+  const oldImage = await getImageByImageId(id);
+  let newImage = {
+    _id: ObjectId(id),
+    url: oldImage.url,
+    tag: oldImage.tag,
+    text: oldImage.text,
+    approval: ("true" === "true")
+  };
+  const imagesCollection = await images();
+  const updatedInfo = await imagesCollection.updateOne(
+    { _id: ObjectId(id) },
+    { $set: newImage }
+  );
+  if (!updatedInfo.matchedCount && !updatedInfo.modifiedCount) {
+    throw "could not update image successfully";
+  }
+  return true;
 }
 
 async function getAllApprovedImages() {
@@ -83,6 +111,7 @@ async function deleteImageByImageId(id) {
 module.exports = {
     addUnapprovedImage,
     getAllUnapprovedImages,
+    getOneUnapprovedImage,
     approveImageByImageId,
     getAllApprovedImages,
     getImageByImageId,
