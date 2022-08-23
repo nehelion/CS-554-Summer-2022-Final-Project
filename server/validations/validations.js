@@ -97,11 +97,19 @@ let validateMail = function(mail, varName) {
         throw `${varName} is not a valid mail`;
 }
 
+let validateBoolean = function(boolean, varName) {
+    if(typeof boolean === 'boolean')
+        return true;
+    else 
+        throw `${varName} should be valid boolean`;
+}
+
 module.exports = {
     validateId      : validateId,
     validateString  : validateString,
     validateDate    : validateDate,
     validateList    : validateList,
     validateNumber  : validateNumber,
-    validateMail    : validateMail
+    validateMail    : validateMail,
+    validateBoolean : validateBoolean
 }

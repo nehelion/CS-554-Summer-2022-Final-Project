@@ -6,6 +6,7 @@ import ImageCard from "./ImageCard";
 import URLS from '../constants/constants';
 import fs from 'fs';
 import SearchImages from "./SearchImages";
+import Home from "./Home";
 
 
 const useStyles = makeStyles({
@@ -109,6 +110,7 @@ const ApprovedImagesList = () => {
 			<Grid container>
 				<Grid item xs={2} md={2} lg={2} className='searchForm'>
 					<SearchImages searchValue={searchValue} />
+					<Home />
 				</Grid>
 				<Grid item xs={2} md={10} lg={10} className='images'>
 					<Grid container className={classes.grid} spacing={3}>

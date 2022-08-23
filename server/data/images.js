@@ -31,15 +31,13 @@ async function setImage(text) {
  * 
  * Structure:
   id - Object(id)
-  userID - Object(id)
-  username - String
+  ownerMail - String
   imageLink - String
   textExtracted - String
-  approval - Boolean
+  isApproved - Boolean
  */
-const insertImage = async (ownerId, ownerMail, imageLink, textExtracted, isApproved) => {
+const insertImage = async (ownerMail, imageLink, textExtracted, isApproved) => {
   // Validations
-  ownerId = validations.validateId(ownerId, "Owner Id");
   ownerMail = validations.validateMail(ownerMail, "Owner Mail");
   imageLink = validations.validateString(imageLink, "Image Link");
   textExtracted = validations.validateString(textExtracted, "Text Extracted");
@@ -48,11 +46,10 @@ const insertImage = async (ownerId, ownerMail, imageLink, textExtracted, isAppro
   // Create New Image Object
   let imageObject = {
     _id: ObjectId(),
-    ownerId: ownerId,
     ownerMail: ownerMail,
     imageLink: imageLink,
     textExtracted: textExtracted,
-    isApproved: false // Initial State of any Image would be unapproved
+    isApproved: isApproved // Initial State of any Image would be unapproved
   }
 
   // Save it to DB
@@ -117,10 +114,10 @@ const getImageByImageId = async (imageId) => {
 /**
  * Get All Images uploaded by User with Id - UserId
  */
-const getImagesByUserId = async (userId) => {
-  userId = validations.validateId(userId, "User Id");
+const getImagesByUserId = async (ownerMail) => {
+  ownerMail = validations.validateId(ownerMail, "User Id");
   const imagesCollection = await getImagesCollection();
-  let imageObjects = await imagesCollection.find({userId: userId}).toArray();
+  let imageObjects = await imagesCollection.find({ownerMail: ownerMail}).toArray();
   if(imageObjects == null)
     throw new Error(`Failed to Get Approved Images`);
   for(let i =0; i < imageObjects.length; i++)

@@ -40,7 +40,7 @@ async function doSignOut() {
 }
 
 async function getCurrentUserName() {
-  return await firebase.auth().currentUser.displayName;
+  return await firebase.auth().currentUser.email;
 }
 
 export {

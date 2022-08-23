@@ -4,66 +4,39 @@ const data = require('../data');
 const imagesData = data.images;
 const path = require('path');
 const fs = require('fs');
-let { ObjectId } = require('mongodb');
 const xss = require('xss');
-const UnauthorizedRequest = require('../errors/UnAuthorizedRequest');
 const validations = require("../validations/validations");
-const UnprocessibleRequest = require('../errors/UnprocessibleRequest');
 const { deleteImageByImageId } = require('../data/images');
 let multer = require('multer');
-const helpers = require('./helpers');
 
 var storage = multer.diskStorage({
   destination: function(req, file, callback) {
     callback(null, 'images/');
   },
   filename: function (req, file, callback) {
-    var newFileName = file.fieldname + '-' + Date.now() + path.extname(file.originalname);
-		callback(null, newFileName);
+    var newFileName = file.originalname;
+	callback(null, newFileName);
   }
 });
+var upload = multer({ storage: storage });
 
-var upload = multer({ storage: storage }).single('file');
-
-var storageTemp = multer.diskStorage({
-  destination: function(req, file, callback) {
-    callback(null, 'images/temp/');
-  },
-  filename: function (req, file, callback) {
-    var newFileName = "temp" + path.extname(file.originalname);
-		callback(null, newFileName);
-  }
-});
-
-var uploadTemp = multer({ storage: storageTemp }).single('file');
-
-router.post('/setImage', function (req,res) {
-	try 
-	{
-		upload(req, res, function (err) {
-			if(err) {
-				res.status(400).send("Something went wrong!");
-			}
-		});
-	} 
-	catch (e) 
-	{
-		res.status(404).json({error: e});
+router.post('/setImage', upload.any(), async (req,res) => {
+	let imageLink = req.body.imageLink;
+	let ownerMail = req.body.ownerMail;
+	let textExtracted = req.body.textExtracted;
+	try {
+		imageLink = validations.validateString(imageLink, 'Image Link');
+		ownerMail = validations.validateMail(ownerMail, "Owner Mail");
+		textExtracted = validations.validateString(textExtracted, "Text Extracted");
+	} catch (e) {
+		return res.status(400).json({"ERROR - setImage": e});
 	}
-});
 
-router.post('/setTempImage', function (req,res) {
-	try 
-	{
-		uploadTemp(req, res, function (err) {
-			if(err) {
-				res.status(400).send("Something went wrong!");
-			}
-		});
-	} 
-	catch (e) 
-	{
-		res.status(404).json({error: e});
+	try {
+		let insertedImage = await imagesData.insertImage(ownerMail, imageLink, textExtracted, false);
+		return res.status(200).json(insertedImage);
+	} catch(e) {
+		return res.status(500).json(e);
 	}
 });
 
