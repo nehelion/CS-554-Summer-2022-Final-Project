@@ -14,6 +14,8 @@ import DialogContentText from '@material-ui/core/DialogContentText';
 import Dialog from '@material-ui/core/Dialog';
 import Button from '@material-ui/core/Button';
 
+import 'tui-image-editor/dist/tui-image-editor.css';
+import ImageEditor from '@toast-ui/react-image-editor';
 
 const useStyles = makeStyles({
     grid: {
@@ -30,7 +32,7 @@ const multer = require('multer');
 const path = require('path');
 const Jimp = require('jimp');
 
-const ApprovedImagesList = () => {
+const Home = () => {
 	const classes = useStyles();
 	const [images, setImages] = useState([]);
 	const [searchTerm, setSearchTerm] = useState('');
@@ -190,6 +192,11 @@ const ApprovedImagesList = () => {
 	} else if (images) {
 		imageCards = images.map(image => (<ImageCard image={image} key={image._id} />));
 	}
+	
+	const myTheme = {
+		// Theme object to extends default dark theme.
+	};
+
 
 	if(loading) {
 		return (
@@ -208,6 +215,11 @@ const ApprovedImagesList = () => {
 					Upload
 				</Button>
 				<Dialog open={open} onClose={handleClose}>
+					
+					
+					
+					
+					
 					<DialogTitle>
 						Upload Image
 					</DialogTitle>
@@ -217,6 +229,36 @@ const ApprovedImagesList = () => {
 						<br />
 						
 						<img src={selectedFileBlob} alt="" />
+						
+						
+						
+						
+						
+						
+						<ImageEditor
+						includeUI={{
+							loadImage: {
+								path: {selectedFile},
+								name: 'SampleImage',
+							},
+							theme: myTheme,
+							menu: ['filter'],
+							initMenu: 'filter',
+							uiSize: {
+								width: '400px',
+								height: '400px',
+							},
+							menuBarPosition: 'bottom',
+						}}
+						cssMaxHeight={500}
+						cssMaxWidth={700}
+						selectionStyle={{
+							cornerSize: 20,
+							rotatingPointOffset: 70,
+						}}
+						usageStatistics={true}
+					/>
+						
 						
 						<br />
 						
@@ -275,4 +317,4 @@ const ApprovedImagesList = () => {
 	
 };
 
-export default ApprovedImagesList;
+export default Home;

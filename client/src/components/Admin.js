@@ -2,93 +2,88 @@ import React, {useState, useEffect,useContext} from 'react';
 import axios from 'axios';
 import {useParams } from "react-router-dom";
 import { AuthContext } from '../firebase/Auth';
+// import { getAuth } from "../firebase/auth";
 import '../Image.css';
 
-const Admin = () =>
-{
+const Admin = () =>{
   const {currentUser} = useContext(AuthContext);
   const [imageInfo, setImageInfo] = useState(false)
-  const [editable, setEditable] = useState(false)
-  const [loading, setLoading ] = useState(true);
-  const params = useParams();
+  const [editable, setEditable] = useState(true)
+  const [ loading, setLoading ] = useState(true);
+  const [ empty, setEmpty ] = useState(false);
+  let admin = false
 
-/*
+  const uid = currentUser.uid;
+  if (uid === 'LE6VJ8K3PnZjoJVd8btEIc4kT3d2'){
+    admin = true;
+  }
+
   useEffect(() => {
     async function fetchData() {
       try {
-        setLoading(true);
-        const {data} = await axios.get('http://localhost:3001/images/getAllUnapprovedImages');
-        console.log("GET 1: ", data);
-				if (data == null)
-				{
-            throw "No more images need to approve!"
-        }
-        //let admin = await axios.post('http://localhost:3001/users/checkAdminFlagByid/' + currentUser._id);
-        //console.log("GET 2: ", admin);
-        //if (admin)
-				//{
-        //    setEditable(true);
-        //} 
-				//else
-				//{
-        //    throw "You are not admin, you can't inspect images!"
-        //}
-        setLoading(false);
-        while(data != null){
-            for (let image in data){
-                setImageInfo(image);
-                setTimeout(() => { }, 5000);
-            }
-            //const {data} = await axios.get('http://localhost:3001/images/getAllUnapprovedImages');
-						//console.log("GET 3: ", data);
-        }
-        if (data == null){
+        // if (currentUser){
+        //   const uid = JSON.stringif(currentUser.uid);
+        //   // let admin = await axios.post('http://localhost:3001/users/checkAdminFlagByid', {
+        //   //   _id:uid
+        //   // });
+        //   if (uid == 'LE6VJ8K3PnZjoJVd8btEIc4kT3d2'){
+        //      setAdmin(true);
+        //   } else{
+        //      setAdmin(false);
+        //   }
+        // }
+
+        const {data} = await axios.get('http://localhost:3001/images/getOneUnapprovedImage');
+        if (data.length === 0){
           throw "No more images need to approve!"
         }
+        setImageInfo(data)
       } catch (e) {
-        console.log(e);
+        setEmpty(true)
+        console.log(JSON.stringify(e.response.data));
       }
+      setLoading(false);
     }
     fetchData();
-  }, [imageInfo, currentUser, params.id]);
-
-*/
+  }, [imageInfo, currentUser]);
 
   const approveImage = async () =>{
-    let edit = document.getElementById('edit').value;
-
-    let oldImage = await axios.get('http://localhost:3001/images/getImageByImageId/' + imageInfo._id);
-    
     try{
-       await axios.post('http://localhost:3001/images/approveImageByImageId/' + imageInfo._id,{
-        id: oldImage._id,
-        userId: oldImage._userId,
-        approverId: oldImage._approverId,
-        uploader: oldImage.uploader,
-        image: oldImage.image,
-        text: oldImage.text,
-        tags: oldImage.tags,
-        approval: oldImage.approval,
-        status: true,
-        approver: oldImage.approver
+      await axios.post('http://localhost:3001/images/approveImageByImageId',{
+        _id: imageInfo._id,
       });
-      
-    }catch(e){
-      alert(e);
+    } catch(e){
+      alert(JSON.stringify(e.response.data));
     }
   }
 
   const deleteImage = async()=>{
     try{
-      await axios.post('http://localhost:3001/images/deleteImageByImageId/' + imageInfo._id,{
-        _Id: imageInfo._id,
+      await axios.post('http://localhost:3001/images/deleteImageByImageId',{
+        _id: imageInfo._id,
       });
     } catch(e){
-      alert(e);
+      alert(JSON.stringify(e.response.data));
     }
   }
   
-  if(loading){
+  if(!admin){
+    return (
+			<div>
+				<h2>Your are not admin!</h2>
+        <h2>Admin Account Email address:</h2>
+        <p>admin@test.com</p>
+        <h2>Admin Account Password:</h2>
+        <p>123456</p>
+			</div>
+		);
+  }else if(empty){
+    return (
+			<div>
+				<h2>No more Image needs to approve...</h2>
+			</div>
+		);
+  }else if(loading){
     return (
 			<div>
 				<h2>Loading...</h2>
@@ -104,15 +99,16 @@ const Admin = () =>
       )
     }
     else{  
+      let imgUrl = imageInfo.url;
       return(
         <div>
           <div className='Image-body'>
             <div className='Top-Info'>
-              <img src = {imageInfo.image} alt = "Image" />
+            <img src={imgUrl}/>
+              {/* <img src = {imageInfo.image} alt = "Image" /> */}
               <div className='Right-Top'>
-                <h3>Inspect Image:</h3>
-                <h1>{imageInfo&&imageInfo.tags}</h1>
-                <h1>{imageInfo&&imageInfo.text}</h1>
+                <h1>{imageInfo&&imageInfo.tag}</h1>
+                <p>{imageInfo&&imageInfo.text}</p>
               </div>
             </div>
 
