@@ -80,9 +80,7 @@ const ImageCard = (props) => {
     let updateTextHandler = (event) => {
         event.preventDefault();
         let text = event.target.imageText.value;
-        // image.text = text;
-        console.log("value updating to " + text);
-        // TODO: need to send the update to backend before re-render this card with new Image Data
+        image.text = text;
         sendBackendCall(text);
         setEditable(false);
     }
@@ -117,7 +115,7 @@ const ImageCard = (props) => {
                         {
                             editable &&
                             <form onSubmit={updateTextHandler} >
-                                <input type="text" name="imageText" defaultValue={image.textExtracted}/>
+                                <input type="text" name="imageText" placeholder={image.textExtracted}/>
                                 <button type="submit"> Update Text </button>
                             </form>
                         }

@@ -157,7 +157,7 @@ router.get('/:fileName', async (req,res) =>{
 			return res.status(200).sendFile(filePath);
 		} else {
 			// File not available
-			return res.status(400).json({"ERROR": "Image Not found in the server"});
+			return res.status(400).sendFile(path.join(__dirname, '../images', "NoImage.png"));
 		}
 	} catch (e) {
 		return res.status(500).json({"ERROR": "Failed to send file"});
