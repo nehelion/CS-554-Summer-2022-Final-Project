@@ -8,7 +8,6 @@ import SignIn from './SignIn'
 import SignUp from './SignUp'
 import SignOut from './SignOut'
 import Home from './Home';
-import ApprovedImagesList from './ApprovedImagesList'
 import Admin from './Admin'
 
 import {AuthProvider} from "../firebase/Auth"
@@ -25,7 +24,6 @@ function App() {
       <Routes>
         <Route path='/' element={<Landing />} />
         <Route path='/home' element={<Home />} />
-        <Route path='/ApprovedImagesList' element={<RequireAuth> <ApprovedImagesList /> </RequireAuth>} />
         <Route path='/admin' element={<RequireAuth> <Admin /></RequireAuth>} />
         <Route path='/signin' element={<SignIn />} />
         <Route path='/signup' element={<SignUp />} />

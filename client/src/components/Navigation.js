@@ -19,7 +19,7 @@ const Navigation = () => {
     return (
       <nav className='navigation'>
         <NavLink className='weblink' to='/'>
-					<img src={__dirname + '..\..\public\logo192.png'} alt="" />
+					<img className='tessImage' src={'/logo192.png'} alt="" />
         </NavLink>
         <div className='searchBar'>
         </div>

@@ -1,6 +1,12 @@
-import React, { useState, useContext, useEffect } from "react";
+import React, { useEffect, useState, useContext } from "react";
+import { Grid, makeStyles } from '@material-ui/core';
+import {getCurrentUserName} from '../firebase/FirebaseFunctions';
 import axios from 'axios';
 import { AuthContext } from '../firebase/Auth';
+import ImageCard from "./ImageCard";
+import URLS from '../constants/constants';
+import fs from 'fs';
+import SearchImages from "./SearchImages";
 import DialogActions from '@material-ui/core/DialogActions';
 import DialogContent from '@material-ui/core/DialogContent';
 import DialogTitle from '@material-ui/core/DialogTitle';
@@ -8,49 +14,12 @@ import DialogContentText from '@material-ui/core/DialogContentText';
 import Dialog from '@material-ui/core/Dialog';
 import Button from '@material-ui/core/Button';
 
-import {
-  Card,
-  CardActionArea,
-  CardContent,
-  CardMedia,
-  Grid,
-  Typography,
-  makeStyles
-} from '@material-ui/core';
 
-import '../App.css';
 const useStyles = makeStyles({
-  card: {
-    width: 300,
-    height: 300,
-    marginLeft: 14,
-    marginRight: 'auto',
-    borderRadius: 5,
-    border: '1px solid #1e8678',
-    boxShadow: '0 19px 38px rgba(0,0,0,0.30), 0 15px 12px rgba(0,0,0,0.22);'
-  },
-  titleHead: {
-    borderBottom: '1px solid #1e8678',
-    fontWeight: 'bold'
-  },
-  grid: {
-		flexGrow: 1,
-    flexDirection: 'row',
-		display: 'flex'
-  },
-  media: {
-    height: '100%',
-    width: '100%'
-  },
-  button: {
-    color: '#1e8678',
-    fontWeight: 'bold',
-    fontSize: 12
-  },
-	centerWrap: {
-		display: 'flex',
-		justifyContent: 'center'
-	}
+    grid: {
+        flexGrow: 1,
+        flexDirection: 'row'
+    }
 });
 
 var Tesseract = require('tesseract.js');
@@ -61,16 +30,83 @@ const multer = require('multer');
 const path = require('path');
 const Jimp = require('jimp');
 
-const Home = () => {
-  const {currentUser} = useContext(AuthContext);
-  const [name, setName] = useState("");
+const ApprovedImagesList = () => {
+	const classes = useStyles();
+	const [images, setImages] = useState([]);
+	const [searchTerm, setSearchTerm] = useState('');
+	const [searchImages, setSearchImages] = useState(null);
+	const [loading, setLoading] = useState(true);
   const [selectedFileBlob, setSelectedFileBlob] = useState(null);
   const [selectedFile, setSelectedFile] = useState(null);
   const [imagesData, setImagesData] = useState(null);
   const [imagesFiles, setImagesFiles] = useState(null);
   const [fileText, setFileText] = useState("Empty");
-	const classes = useStyles();
-	const imagesPath = path.join(__dirname, '../../../server/images/');
+  const {currentUser} = useContext(AuthContext);
+	
+	useEffect(() => {
+		const loadImages = async () => {
+			if(!images || images.length === 0) {
+				try {
+					const imagesResponse = await axios.get(URLS.GET_ALL_IMAGES_URL);
+					if(imagesResponse) {
+						let {data} = imagesResponse;
+						setImages(data);
+						setLoading(false);
+					} 
+				} catch (e) {
+					console.log("Failed to retrieve the images from backend", e);
+					setImages([]);
+				}
+			}
+		}
+		loadImages();
+	}, []);
+
+	useEffect(() => {
+		const getSearchImages = async () => {
+			try{
+				const searchImagesResponse =  await axios.get(`${URLS.SEARCH_IMAGES_URL}?searchTerm=${searchTerm}`);
+				if(searchImagesResponse.status === 200) {
+					setSearchImages(searchImagesResponse.data);
+					setLoading(false);
+				}
+			} catch (e) {
+				console.log(e);
+			}
+		}
+
+		if(searchTerm) {
+			getSearchImages();
+		} else {
+			setSearchImages(null);
+		}
+	}, [searchTerm]);
+
+
+	const fileUploadHandler =  (event) => {
+		event.preventDefault();
+		console.log("TEST" + event.target.imageFile.files[0]);
+		const fileUploaded = event.target.imageFile.files[0];
+
+		// To hit the Backend along with the data, file-uploaded
+		// TODO: Not yet Tested
+		const storeImageAtBackend = async function() {
+			try {
+				const FormData = require('form-data'); // npm install --save form-data
+				const form = new FormData();
+				form.append('name', event.target.imageName.value);
+				form.append('owner', await getCurrentUserName());
+				form.append('file', fs.createReadStream(fileUploaded.path));
+				let requestConfig = {headers: {...form.getHeaders()}}
+				const imageStoredAtBackend = await axios.post(URLS.UPLOAD_IMAGE_URL, form, requestConfig);
+				setImages([...images, imageStoredAtBackend]);
+			} catch(e) {
+				console.log("File failed to upload", e);
+				alert("File failed to upload", e);
+			}
+		}
+		storeImageAtBackend();
+	}
 	
 	const onImageChange = (e) => {
     const [file] = e.target.files;
@@ -134,55 +170,6 @@ const Home = () => {
     setOpen(false);
 	};
 	
-	
-	useEffect(() => 
-	{
-    async function fetchData() 
-		{
-      try 
-			{
-				const {data} = await axios.get('http://localhost:3001/images/getAllUnapprovedImages');
-				
-				console.log("HERE 1: ", data);
-		
-				setImagesData(data);
-				
-				const imageFile = await axios.get('http://localhost:3001/images/image-1661239829766.jpg');
-				//const [file] = imageFile;
-				
-				//setImagesFiles(imageFile.data);
-				//setImagesFiles(URL.createObjectURL(file));
-				
-				
-				var canvas = document.getElementById("testimg");
-        var img = new Image();
-        img.src = __dirname + '../../../server/images/image-1661239829766.jpg';
-				
-				//var arrayBufferView = new Uint8Array( imageFile );
-				//var blob = new Blob( [ arrayBufferView ], { type: "image/jpeg" } );
-				//var urlCreator = window.URL || window.webkitURL;
-				//var imageUrl = URL.createObjectURL( blob );
-				setImagesFiles(imageFile);
-				
-				
-				//var reader  = new FileReader();
-				//reader.readAsDataURL(file);
-				
-				
-				
-				
-				//console.log("HERE 2: ", imageUrl);
-				//console.log("HERE 3: ", imageFile.data);
-				
-			}
-			catch (e) 
-			{
-				console.log(e);
-			}
-		}
-		fetchData();
-  }, []);
-	
 	const [open, setOpen] = React.useState(false);
   
   const handleClickOpen = () => {
@@ -193,9 +180,29 @@ const Home = () => {
     setOpen(false);
   };
 
-	return (
-		<div>
-			<div className={classes.centerWrap}>
+	const searchValue = async (value) => {
+		setSearchTerm(value);
+	};
+
+	let imageCards = null;
+	if(searchImages) {
+		imageCards = searchImages.map(image => (<ImageCard image={image} key={image._id} />));
+	} else if (images) {
+		imageCards = images.map(image => (<ImageCard image={image} key={image._id} />));
+	}
+
+	if(loading) {
+		return (
+            <div>
+                Loading....
+            </div>
+        ); 
+	} else {
+		return (
+			<Grid container>
+				<Grid item xs={2} md={2} lg={2} className='searchForm'>
+					
+					<div className={classes.centerWrap}>
 				<Button variant="outlined" 
 								color="primary" onClick={handleClickOpen}>
 					Upload
@@ -226,48 +233,46 @@ const Home = () => {
 					</form>
 				</Dialog>
 			</div>
+					
+					<SearchImages searchValue={searchValue} />
+				</Grid>
+				<Grid item xs={2} md={10} lg={10} className='images'>
+					<Grid container className={classes.grid} spacing={3}>
+						{(imageCards.length > 0 )? imageCards : <h4> No Images to Display</h4>}
+					</Grid>
+				</Grid>
+      		</Grid>
+		);
+	}
+
+
+	// if(images.length !== 0) {
+	// 	let imageCards = images.map(image => (<ImageCard image={image} key={image.id} />));
+	// 	return (
+    //   <div>
+    //     <Grid container className={classes.grid} spacing={3}>
+    //           {imageCards}
+    //     </Grid>
+    //   </div>
+
+	// 		// <Grid container style={{width: '80%', margin: '0 auto'}}>
+	// 		// 	<Grid item xs={2} className='uploadImageForm'>
+	// 		// 		<form onSubmit={fileUploadHandler}>
+	// 		// 			<input type="text" name="imageName" onChange={event => console.log(event.target.value)} />
+	// 		// 			<input type="file" name="imageFile" onChange={event => console.log("File choosing")} />
+	// 		// 			<button type="submit"> Upload and Extract </button>
+	// 		// 		</form>
+    //   // 			</Grid>
+	// 		// 	<Grid item xs={10} className='uploadImageForm'>
+					
+	// 		// 	</Grid>
+	// 		// </Grid>
+	// 	);
+	// } else {
 		
-			<img id="testimg" src={imagesFiles} alt="" />
-			
-			{imagesData ? 
-			(
-			
-			<Grid item xs={3} sm={12} md={10} container spacing={4}>
-				{
-					imagesData.map((image) => {
-						return (
-							<Card className={classes.card} key={image._id} variant='outlined'>
-								<CardActionArea>
-									<CardMedia
-										className={classes.media}
-										component='img'
-										//image={imagesFiles}
-										title='show image'
-									/>
-									
-									
-									
-									<CardContent>
-										<Typography
-											className={classes.titleHead}
-											gutterBottom
-											variant='h6'
-											component='h4'
-										>
-											{image.textExtracted}
-										</Typography>
-									</CardContent>
-								</CardActionArea>
-							</Card>
-						)
-				})}
-			</Grid>
-			
-			):(<div></div>)
-			}
-			
-		</div>
-	);
+	
+	
+	
 };
 
-export default Home;
+export default ApprovedImagesList;
