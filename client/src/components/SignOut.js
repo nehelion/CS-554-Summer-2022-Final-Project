@@ -1,7 +1,21 @@
 import React from 'react';
 import {doSignOut} from '../firebase/FirebaseFunctions';
+import Button from '@material-ui/core/Button';
 
-const SignOutButton = () => {
+import {
+  makeStyles
+} from '@material-ui/core';
+
+const useStyles = makeStyles({
+	centerWrap: {
+		display: 'flex',
+		justifyContent: 'center'
+	}
+});
+
+const SignOutButton = () => 
+{
+	const classes = useStyles();
 
   let handleSignOut = () => {
     // Destroy the Firebase Session
@@ -9,9 +23,11 @@ const SignOutButton = () => {
   }
 
   return (
-    <button type='button' onClick={doSignOut}>
-      Confirm to Sign out
-    </button>
+		<div className={classes.centerWrap}>
+			<Button variant="outlined" onClick={doSignOut} color="primary">
+				Confirm to Sign out
+			</Button>
+		</div>
   );
 };
 

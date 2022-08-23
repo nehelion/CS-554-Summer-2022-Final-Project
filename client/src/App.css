@@ -14,10 +14,10 @@
 }
 
 .App-header {
-	background-color: #282c34;
+	background-color: #78c0ff;
 	height: 100px;
 	padding: 20px;
-	color: white;
+	color: black;
 }
 
 .App-link {
@@ -34,7 +34,7 @@
 }
 
 .navigation {
-	background: #282c34;
+	background: #78c0ff;
 }
 
 .navigation ul {
@@ -45,8 +45,14 @@
 
 .navigation a:link,
 .navigation a:visited {
-	color: white;
+	font-weight: bold;
+	color: black;
 	text-decoration: none;
+	font-size: 35px;
+}
+.navigation a:hover {
+	text-decoration: none;
+	color: red;
 }
 
 .active {
@@ -264,4 +270,9 @@ a:active { text-decoration: none; }
 
 #itemDeleted {
 	background-color: red;
+}
+
+#centerWrap {
+  display: flex;
+  justify-content: center;
 }

@@ -19,20 +19,18 @@ const Navigation = () => {
     return (
       <nav className='navigation'>
         <NavLink className='weblink' to='/'>
+					<img src={__dirname + '..\..\public\logo192.png'} alt="" />
         </NavLink>
         <div className='searchBar'>
         </div>
         <NavLink className='weblink' to='/home'>
-          <i className="fa fa-user-circle" aria-hidden="true"></i>Home
-        </NavLink>
-        <NavLink className='weblink' to='/ApprovedImagesList'>
-          <i className="fa fa-user-circle" aria-hidden="true"></i>Approved Images
+          Home
         </NavLink>
         <NavLink className='weblink' to='/admin'>
-          <i className="fa fa-user-circle" aria-hidden="true"></i>Admin
+          Admin
         </NavLink>
         <NavLink className='weblink' to='/signout'>
-          <i className="fa fa-user-circle" aria-hidden="true"></i>Sign Out
+          Sign Out
         </NavLink>
       </nav>
     );

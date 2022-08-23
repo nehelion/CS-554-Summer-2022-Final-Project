@@ -21,9 +21,9 @@ import {
 import '../App.css';
 const useStyles = makeStyles({
   card: {
-    width: 150,
-    height: 220,
-    marginLeft: 'auto',
+    width: 300,
+    height: 300,
+    marginLeft: 14,
     marginRight: 'auto',
     borderRadius: 5,
     border: '1px solid #1e8678',
@@ -34,8 +34,9 @@ const useStyles = makeStyles({
     fontWeight: 'bold'
   },
   grid: {
-		flexGrow: 5,
-    flexDirection: 'row'
+		flexGrow: 1,
+    flexDirection: 'row',
+		display: 'flex'
   },
   media: {
     height: '100%',
@@ -45,7 +46,11 @@ const useStyles = makeStyles({
     color: '#1e8678',
     fontWeight: 'bold',
     fontSize: 12
-  }
+  },
+	centerWrap: {
+		display: 'flex',
+		justifyContent: 'center'
+	}
 });
 
 var Tesseract = require('tesseract.js');
@@ -149,13 +154,15 @@ const Home = () => {
 				//setImagesFiles(URL.createObjectURL(file));
 				
 				
+				var canvas = document.getElementById("testimg");
+        var img = new Image();
+        img.src = __dirname + '../../../server/images/image-1661239829766.jpg';
 				
-				
-				var arrayBufferView = new Uint8Array( imageFile );
-				var blob = new Blob( [ arrayBufferView ], { type: "image/jpeg" } );
-				var urlCreator = window.URL || window.webkitURL;
-				var imageUrl = URL.createObjectURL( blob );
-				setImagesFiles(imageUrl);
+				//var arrayBufferView = new Uint8Array( imageFile );
+				//var blob = new Blob( [ arrayBufferView ], { type: "image/jpeg" } );
+				//var urlCreator = window.URL || window.webkitURL;
+				//var imageUrl = URL.createObjectURL( blob );
+				setImagesFiles(imageFile);
 				
 				
 				//var reader  = new FileReader();
@@ -164,7 +171,7 @@ const Home = () => {
 				
 				
 				
-				console.log("HERE 2: ", imageUrl);
+				//console.log("HERE 2: ", imageUrl);
 				//console.log("HERE 3: ", imageFile.data);
 				
 			}
@@ -188,7 +195,7 @@ const Home = () => {
 
 	return (
 		<div>
-			<div>
+			<div className={classes.centerWrap}>
 				<Button variant="outlined" 
 								color="primary" onClick={handleClickOpen}>
 					Upload
@@ -203,8 +210,6 @@ const Home = () => {
 						<br />
 						
 						<img src={selectedFileBlob} alt="" />
-						
-						<img src={imagesFiles} alt="" />
 						
 						<br />
 						
@@ -222,12 +227,12 @@ const Home = () => {
 				</Dialog>
 			</div>
 		
+			<img id="testimg" src={imagesFiles} alt="" />
 			
-		
 			{imagesData ? 
 			(
 			
-			<Grid>
+			<Grid item xs={3} sm={12} md={10} container spacing={4}>
 				{
 					imagesData.map((image) => {
 						return (
@@ -236,7 +241,7 @@ const Home = () => {
 									<CardMedia
 										className={classes.media}
 										component='img'
-										image={imagesPath + image.imageLink}
+										//image={imagesFiles}
 										title='show image'
 									/>
 									
@@ -247,7 +252,7 @@ const Home = () => {
 											className={classes.titleHead}
 											gutterBottom
 											variant='h6'
-											component='h3'
+											component='h4'
 										>
 											{image.textExtracted}
 										</Typography>

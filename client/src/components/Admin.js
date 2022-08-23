@@ -12,6 +12,7 @@ const Admin = () =>
   const [loading, setLoading ] = useState(true);
   const params = useParams();
 
+/*
   useEffect(() => {
     async function fetchData() {
       try {
@@ -50,6 +51,8 @@ const Admin = () =>
     }
     fetchData();
   }, [imageInfo, currentUser, params.id]);
+
+*/
 
   const approveImage = async () =>{
     let edit = document.getElementById('edit').value;
