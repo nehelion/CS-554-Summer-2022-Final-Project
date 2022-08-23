@@ -1,6 +1,12 @@
 import React, { useState, useContext, useEffect } from "react";
 import axios from 'axios';
 import { AuthContext } from '../firebase/Auth';
+import DialogActions from '@material-ui/core/DialogActions';
+import DialogContent from '@material-ui/core/DialogContent';
+import DialogTitle from '@material-ui/core/DialogTitle';
+import DialogContentText from '@material-ui/core/DialogContentText';
+import Dialog from '@material-ui/core/Dialog';
+import Button from '@material-ui/core/Button';
 
 import {
   Card,
@@ -28,7 +34,7 @@ const useStyles = makeStyles({
     fontWeight: 'bold'
   },
   grid: {
-		flexGrow: 1,
+		flexGrow: 5,
     flexDirection: 'row'
   },
   media: {
@@ -59,6 +65,7 @@ const Home = () => {
   const [imagesFiles, setImagesFiles] = useState(null);
   const [fileText, setFileText] = useState("Empty");
 	const classes = useStyles();
+	const imagesPath = path.join(__dirname, '../../../server/images/');
 	
 	const onImageChange = (e) => {
     const [file] = e.target.files;
@@ -76,6 +83,9 @@ const Home = () => {
 		})
 		
     setSelectedFileBlob(URL.createObjectURL(file));
+		
+		console.log("HERE -1: ", e.target);
+		console.log("HERE 0: ", URL.createObjectURL(file));
   };
 	
 	const storage = multer.diskStorage(
@@ -115,6 +125,8 @@ const Home = () => {
 				alert("File Upload success");
 			})
 			.catch((err) => alert("File Upload Error"));
+	
+    setOpen(false);
 	};
 	
 	
@@ -130,11 +142,31 @@ const Home = () => {
 		
 				setImagesData(data);
 				
-				const {imageFile} = await axios.get('http://localhost:3001/images/' + data[0].imageLink)
+				const imageFile = await axios.get('http://localhost:3001/images/image-1661239829766.jpg');
+				//const [file] = imageFile;
 				
-				setImagesFiles(imageFile);
+				//setImagesFiles(imageFile.data);
+				//setImagesFiles(URL.createObjectURL(file));
 				
-				console.log("HERE 2: ", process.env.PUBLIC_URL + '/images/' + data[0].imageLink);
+				
+				
+				
+				var arrayBufferView = new Uint8Array( imageFile );
+				var blob = new Blob( [ arrayBufferView ], { type: "image/jpeg" } );
+				var urlCreator = window.URL || window.webkitURL;
+				var imageUrl = URL.createObjectURL( blob );
+				setImagesFiles(imageUrl);
+				
+				
+				//var reader  = new FileReader();
+				//reader.readAsDataURL(file);
+				
+				
+				
+				
+				console.log("HERE 2: ", imageUrl);
+				//console.log("HERE 3: ", imageFile.data);
+				
 			}
 			catch (e) 
 			{
@@ -143,25 +175,54 @@ const Home = () => {
 		}
 		fetchData();
   }, []);
+	
+	const [open, setOpen] = React.useState(false);
+  
+  const handleClickOpen = () => {
+    setOpen(true);
+  };
+  
+  const handleClose = () => {
+    setOpen(false);
+  };
 
 	return (
 		<div>
-			<form> 
-				<input id="submitted_image" name="submitted_image" type="file" onChange={onImageChange} />
-				
-				<br />
-				
-				<img src={selectedFileBlob} alt="" />
-				
-				<br />
-				
-				<label id="image-text">{fileText}</label>
-				
-				<br />
-				<br />
-				
-				<button className="submit_button" onClick={uploadText}>Submit</button>
-			</form>
+			<div>
+				<Button variant="outlined" 
+								color="primary" onClick={handleClickOpen}>
+					Upload
+				</Button>
+				<Dialog open={open} onClose={handleClose}>
+					<DialogTitle>
+						Upload Image
+					</DialogTitle>
+					<form> 
+						<input id="submitted_image" name="submitted_image" type="file" onChange={onImageChange} />
+						
+						<br />
+						
+						<img src={selectedFileBlob} alt="" />
+						
+						<img src={imagesFiles} alt="" />
+						
+						<br />
+						
+						<label id="image-text">{fileText}</label>
+						
+						<br />
+						<br />
+						
+						<DialogActions>
+							<Button className="submit_button" onClick={uploadText} color="primary">
+								Submit
+							</Button>
+						</DialogActions>
+					</form>
+				</Dialog>
+			</div>
+		
+			
 		
 			{imagesData ? 
 			(
@@ -170,16 +231,16 @@ const Home = () => {
 				{
 					imagesData.map((image) => {
 						return (
-							<Card className={classes.card} variant='outlined'>
+							<Card className={classes.card} key={image._id} variant='outlined'>
 								<CardActionArea>
 									<CardMedia
 										className={classes.media}
 										component='img'
-										image={process.env.PUBLIC_URL + '/images/' + image.imageLink}
+										image={imagesPath + image.imageLink}
 										title='show image'
 									/>
 									
-									<img src={imagesFiles} alt="" />
+									
 									
 									<CardContent>
 										<Typography
