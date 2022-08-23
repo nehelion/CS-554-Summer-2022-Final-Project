@@ -25,10 +25,37 @@ var storage = multer.diskStorage({
 
 var upload = multer({ storage: storage }).single('file');
 
+var storageTemp = multer.diskStorage({
+  destination: function(req, file, callback) {
+    callback(null, 'images/temp/');
+  },
+  filename: function (req, file, callback) {
+    var newFileName = "temp" + path.extname(file.originalname);
+		callback(null, newFileName);
+  }
+});
+
+var uploadTemp = multer({ storage: storageTemp }).single('file');
+
 router.post('/setImage', function (req,res) {
 	try 
 	{
 		upload(req, res, function (err) {
+			if(err) {
+				res.status(400).send("Something went wrong!");
+			}
+		});
+	} 
+	catch (e) 
+	{
+		res.status(404).json({error: e});
+	}
+});
+
+router.post('/setTempImage', function (req,res) {
+	try 
+	{
+		uploadTemp(req, res, function (err) {
 			if(err) {
 				res.status(400).send("Something went wrong!");
 			}
