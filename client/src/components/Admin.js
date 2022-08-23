@@ -4,35 +4,42 @@ import {useParams } from "react-router-dom";
 import { AuthContext } from '../firebase/Auth';
 import '../Image.css';
 
-const Admin = () =>{
+const Admin = () =>
+{
   const {currentUser} = useContext(AuthContext);
   const [imageInfo, setImageInfo] = useState(false)
   const [editable, setEditable] = useState(false)
-
-  const [ loading, setLoading ] = useState(true);
+  const [loading, setLoading ] = useState(true);
   const params = useParams();
 
   useEffect(() => {
     async function fetchData() {
       try {
         setLoading(true);
-        const {data} = await axios.get('http://localhost:3001/getAllUnapprovedImages');
-        if (data == null){
+        const {data} = await axios.get('http://localhost:3001/images/getAllUnapprovedImages');
+        console.log("GET 1: ", data);
+				if (data == null)
+				{
             throw "No more images need to approve!"
         }
-        let admin = await axios.post('http://localhost:3001/checkAdminFlagByid/' + currentUser._id);
-        if (admin){
-            setEditable(true);
-        } else{
-            throw "You are not admin, you can't inspect images!"
-        }
+        //let admin = await axios.post('http://localhost:3001/users/checkAdminFlagByid/' + currentUser._id);
+        //console.log("GET 2: ", admin);
+        //if (admin)
+				//{
+        //    setEditable(true);
+        //} 
+				//else
+				//{
+        //    throw "You are not admin, you can't inspect images!"
+        //}
         setLoading(false);
         while(data != null){
             for (let image in data){
                 setImageInfo(image);
                 setTimeout(() => { }, 5000);
             }
-            const {data} = await axios.get('http://localhost:3001/getAllUnapprovedImages');
+            //const {data} = await axios.get('http://localhost:3001/images/getAllUnapprovedImages');
+						//console.log("GET 3: ", data);
         }
         if (data == null){
           throw "No more images need to approve!"
@@ -47,10 +54,10 @@ const Admin = () =>{
   const approveImage = async () =>{
     let edit = document.getElementById('edit').value;
 
-    let oldImage = await axios.get('http://localhost:3001/getImageByImageId/' + imageInfo._id);
+    let oldImage = await axios.get('http://localhost:3001/images/getImageByImageId/' + imageInfo._id);
     
     try{
-       await axios.post('http://localhost:3001/approveImageByImageId/' + imageInfo._id,{
+       await axios.post('http://localhost:3001/images/approveImageByImageId/' + imageInfo._id,{
         id: oldImage._id,
         userId: oldImage._userId,
         approverId: oldImage._approverId,
@@ -70,7 +77,7 @@ const Admin = () =>{
 
   const deleteImage = async()=>{
     try{
-      await axios.post('http://localhost:3001/deleteImageByImageId/' + imageInfo._id,{
+      await axios.post('http://localhost:3001/images/deleteImageByImageId/' + imageInfo._id,{
         _Id: imageInfo._id,
       });
     } catch(e){

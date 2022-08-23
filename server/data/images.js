@@ -5,27 +5,6 @@ const { ObjectId } = require('mongodb');
 const uuid = require('uuid');
 const UnprocessibleRequest = require("../errors/UnprocessibleRequest");
 
-async function setImage(text) {
-  const imagesCollection = await images();
-	console.log("here 1");
-	
-	let newImage = 
-	{
-    _id: uuid.v4(),
-		uploader: 'tempUserName',
-		image: 'https://imageio.forbes.com/specials-images/imageserve/dv424076/Boulder--Namibia--Africa/960x0.jpg?format=jpg&width=960',
-    text: text,
-    approved: false
-  }
-	console.log("here 2");
-  const insertDetails = await imagesCollection.insertOne(newImage);
-  if (insertDetails.insertedCount === 0) throw "Could not add image, try again!"
-	
-	console.log("here 3");
-	
-  return {taskInserted: true};
-}
-
 /**
  * Save a new Image Object 
  * 
@@ -37,18 +16,15 @@ async function setImage(text) {
   textExtracted - String
   approval - Boolean
  */
-const insertImage = async (ownerId, ownerMail, imageLink, textExtracted, isApproved) => {
+const insertImage = async (ownerMail, imageLink, textExtracted) => {
   // Validations
-  ownerId = validations.validateId(ownerId, "Owner Id");
   ownerMail = validations.validateMail(ownerMail, "Owner Mail");
   imageLink = validations.validateString(imageLink, "Image Link");
   textExtracted = validations.validateString(textExtracted, "Text Extracted");
-  isApproved = validations.validateBoolean(isApproved);
 
   // Create New Image Object
   let imageObject = {
     _id: ObjectId(),
-    ownerId: ownerId,
     ownerMail: ownerMail,
     imageLink: imageLink,
     textExtracted: textExtracted,
@@ -189,7 +165,6 @@ const deleteImageByImageId = async (imageId) => {
 };
 
 module.exports = {
-		setImage,
     insertImage,
     getAllUnapprovedImages,
     getAllApprovedImages,

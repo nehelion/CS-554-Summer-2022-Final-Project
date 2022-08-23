@@ -14,22 +14,32 @@ let multer = require('multer');
 const helpers = require('./helpers');
 
 var storage = multer.diskStorage({
-  destination: function(req, file, callback) {
+  destination: function(req, file, callback) 
+	{
     callback(null, 'images/');
   },
-  filename: function (req, file, callback) {
-    var newFileName = file.originalname;
-	callback(null, newFileName);
+  filename: function (req, file, callback) 
+	{
+		var newFileName = 'image-' + Date.now() + path.extname(file.originalname);
+		callback(null, newFileName);
   }
 });
 var upload = multer({ storage: storage }).single('file');
 
-router.post('/setImage', function (req,res) {
+router.post('/setImage', async (req,res) => {
 	try 
 	{
-		upload(req, res, function (err) {
-			if(err) {
+		upload(req, res, async (err) =>
+		{
+			let result = await imagesData.insertImage(req.body.ownerMail, req.file.filename, req.body.textExtracted);
+
+			if(err) 
+			{
 				res.status(400).send("Something went wrong!");
+			}
+			else 
+			{
+				return res.status(200).json(result);
 			}
 		});
 	} 
@@ -154,9 +164,11 @@ router.get('/:fileName', async (req,res) =>{
 	try {
 		if(fs.existsSync(filePath)) {
 			// File Exists. Return it
+			console.log("exist");
 			return res.status(200).sendFile(filePath);
 		} else {
 			// File not available
+			console.log("exist not");
 			return res.status(400).sendFile(path.join(__dirname, '../images', "NoImage.png"));
 		}
 	} catch (e) {
