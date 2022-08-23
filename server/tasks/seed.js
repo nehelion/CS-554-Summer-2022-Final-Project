@@ -1,10 +1,10 @@
-const dbConnection = require('./config/connection');
-const data = require('./data');
+const dbConnection = require("../config/mongoConnection");
+const data = require('../data');
 const imagesData = data.images;
 
 async function init() {
 
-  const db = await dbConnection();
+  const db = await dbConnection.connectToDb();
   await db.dropDatabase();
 
   console.log("------------Init Images------------");
@@ -56,8 +56,7 @@ async function init() {
 
   console.log("------------create users successfully------------");
 
-  await db.serverConfig.close();
-  console.log("closed")
+  await dbConnection.closeConnection();
 
 }
 

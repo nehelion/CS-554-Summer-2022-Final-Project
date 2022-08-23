@@ -4,7 +4,7 @@
   "description": "My redux Lab6 module",
   "main": "index.js",
   "scripts": {
-    "init": "node init.js",
+    "seed": "node ./tasks/seed.js",
     "test": "echo \"Error: no test specified\" && exit 1",
     "start": "node App.js"
   },
