@@ -39,7 +39,8 @@ const Home = () => {
 	const [searchImages, setSearchImages] = useState(null);
 	const [loading, setLoading] = useState(true);
   const [fileText, setFileText] = useState("Empty");
-  const [fileData, setDataText] = useState("Empty");
+  const [imageExtract, setImageExtract] = useState(null);
+  const [imageExtractDisp, setImageExtractDisp] = useState(null);
   const {currentUser} = useContext(AuthContext);
 	let theSelectedFile = null;
 	var imageEditor = null;
@@ -107,11 +108,9 @@ const Home = () => {
 	{
 		const data = new FormData();
 		
-		let imageObj = dataURLtoFile(fileData, "newfile.jpg");
-		
 		data.append("ownerMail", currentUser.email);
 		data.append("textExtracted", fileText);
-		data.append("file", imageObj);
+		data.append("file", imageExtract);
 		
 		axios({
 			method: "post",
@@ -163,6 +162,7 @@ const Home = () => {
 			
 		var x = document.getElementById("tesseractload");
 		var y = document.getElementById("tesseracthide");
+		var z = document.getElementById("tesseractread");
 			
 		x.style.display = "block";
 		y.style.display = "none";
@@ -173,9 +173,11 @@ const Home = () => {
 			}).then(({ data: { text } }) => 
 			{
 				setFileText(text);
-				setDataText(file);
+				let imageObj = dataURLtoFile(file, "newfile.jpg");
+				setImageExtract(imageObj);
+				setImageExtractDisp(URL.createObjectURL(imageObj));
+				z.style.display = "block";
 				x.style.display = "none";
-				y.style.display = "block";
 			});
   };
 	
@@ -213,9 +215,7 @@ const Home = () => {
 					</DialogTitle>
 					<form> 
 					
-						<br />
-						
-						<img width="800px" height="600px" id="tesseractload" src="https://c.tenor.com/wfEN4Vd_GYsAAAAM/loading.gif" alt="" hidden />
+						<img width="800px" height="600px" id="tesseractload" src="http://superstorefinder.net/support/wp-content/uploads/2018/01/orange_circles.gif" alt="" hidden />
 						
 						<div id="tesseracthide" >
 						<ImageEditor
@@ -238,17 +238,26 @@ const Home = () => {
 								rotatingPointOffset: 70,
 							}}
 							usageStatistics={true}
-							onMousedown={handleMousedown}
 						/>
 						
 						<br />
 						
-						<label id="image-text">{fileText}</label>
-						
-						<br />
-						<br />
-						
 						<DialogActions>
+							<Button className="submit_button" onClick={handleMousedown} color="primary">
+								Extract
+							</Button>
+						</DialogActions>
+						</div>
+						
+						<div id="tesseractread" hidden>
+						
+						<img src={imageExtractDisp} alt="" />
+						
+						<br />
+						
+						<label id="image-text">Text Extracted: {fileText}</label>
+						
+						<DialogActions hidden>
 							<Button className="submit_button" onClick={uploadText} color="primary">
 								Submit
 							</Button>
