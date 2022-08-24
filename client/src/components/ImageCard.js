@@ -19,6 +19,7 @@ const useStyles = makeStyles({
       },
       titleHead: {
         borderBottom: '1px solid #1e8678',
+				fontSize: '15px',
         fontWeight: 'bold'
       },
       grid: {
@@ -105,7 +106,11 @@ const ImageCard = (props) => {
                         gutterBottom
                         variant='h6'
                         component='h1'>
+                        <p>File Name: </p>
                         <a href={`${URLS.GET_IMAGE_DETAILS_URL_BY_ID}/${image._id}`}>{image.imageLink}</a>
+                        <p>User:</p>
+                        <p>{image.ownerMail}</p>
+                        <p>Text:</p>
                         <p>{image.textExtracted}</p>
                     </Typography>
                     {

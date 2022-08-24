@@ -13,7 +13,6 @@ import DialogTitle from '@material-ui/core/DialogTitle';
 import DialogContentText from '@material-ui/core/DialogContentText';
 import Dialog from '@material-ui/core/Dialog';
 import Button from '@material-ui/core/Button';
-
 import 'tui-image-editor/dist/tui-image-editor.css';
 import ImageEditor from '@toast-ui/react-image-editor';
 
@@ -29,11 +28,8 @@ const useStyles = makeStyles({
 
 var Tesseract = require('tesseract.js');
 var grid = require("gridfs-stream");
-var mongooseDrv = require("mongoose");
-const helpers = require('./helpers');
 const multer = require('multer');
 const path = require('path');
-const Jimp = require('jimp');
 
 const Home = () => {
 	const editorRef = React.createRef();
@@ -42,10 +38,6 @@ const Home = () => {
 	const [searchTerm, setSearchTerm] = useState('');
 	const [searchImages, setSearchImages] = useState(null);
 	const [loading, setLoading] = useState(true);
-  const [selectedFileBlob, setSelectedFileBlob] = useState(null);
-  const [selectedFileData, setSelectedFileData] = useState(null);
-  const [selectedFile, setSelectedFile] = useState(null);
-  const [imagesFiles, setImagesFiles] = useState(null);
   const [fileText, setFileText] = useState("Empty");
   const [fileData, setDataText] = useState("Empty");
   const {currentUser} = useContext(AuthContext);
@@ -90,37 +82,11 @@ const Home = () => {
 			setSearchImages(null);
 		}
 	}, [searchTerm]);
-
-	const fileUploadHandler =  (event) => {
-		event.preventDefault();
-		console.log("TEST" + event.target.imageFile.files[0]);
-		const fileUploaded = event.target.imageFile.files[0];
-
-		// To hit the Backend along with the data, file-uploaded
-		// TODO: Not yet Tested
-		const storeImageAtBackend = async function() {
-			try {
-				const FormData = require('form-data'); // npm install --save form-data
-				const form = new FormData();
-				form.append('name', event.target.imageName.value);
-				form.append('owner', await getCurrentUserName());
-				form.append('file', fs.createReadStream(fileUploaded.path));
-				let requestConfig = {headers: {...form.getHeaders()}}
-				const imageStoredAtBackend = await axios.post(URLS.UPLOAD_IMAGE_URL, form, requestConfig);
-				setImages([...images, imageStoredAtBackend]);
-			} catch(e) {
-				console.log("File failed to upload", e);
-				alert("File failed to upload", e);
-			}
-		}
-		storeImageAtBackend();
-	}
 	
 	const storage = multer.diskStorage(
 	{
 		dest: './images/',
 
-		// By default, multer removes file extensions so let's add them back
 		filename: function(req, file, cb) 
 		{
 			try
@@ -134,16 +100,6 @@ const Home = () => {
 			}
 		}
 	});
-	
-	function dataURLtoFile(dataurl, filename) 
-	{
-		var arr = dataurl.split(','), mime = arr[0].match(/:(.*?);/)[1],
-				bstr = atob(arr[1]), n = bstr.length, u8arr = new Uint8Array(n);
-				while(n--){
-						u8arr[n] = bstr.charCodeAt(n);
-				}
-				return new File([u8arr], filename, {type:mime});
-	}
 	
 	const uploadText = async () => 
 	{
@@ -162,13 +118,10 @@ const Home = () => {
 			headers: { "Content-Type": "multipart/form-data" },
 		})
 			.then((res) => {
-				alert("File Upload success");
+				console.log("File Upload success");
 			})
 			.catch((err) => alert("File Upload Error"));
 	
-		setSelectedFile(null);
-		setSelectedFileBlob(null);
-		setSelectedFileData(null);
     setOpen(false);
 	};
 	
@@ -223,8 +176,18 @@ const Home = () => {
 				y.style.display = "block";
 			});
   };
-
-//<input id="submitted_image" name="submitted_image" type="file" onChange={onImageChange} />
+	
+	// convert DATA URL to Image File
+	function dataURLtoFile(dataurl, filename) 
+	{
+		var arr = dataurl.split(','), mime = arr[0].match(/:(.*?);/)[1],
+				bstr = atob(arr[1]), n = bstr.length, u8arr = new Uint8Array(n);
+				while(n--){
+						u8arr[n] = bstr.charCodeAt(n);
+				}
+				return new File([u8arr], filename, {type:mime});
+	}
+	
 	if(loading) {
 		return (
             <div>
@@ -243,10 +206,6 @@ const Home = () => {
 				</Button>
 				<Dialog classes={{ paper : classes.paper}} open={open} onClose={handleClose}>
 					
-					
-					
-					
-					
 					<DialogTitle>
 						Upload Image
 					</DialogTitle>
@@ -255,7 +214,6 @@ const Home = () => {
 						<br />
 						
 						<img width="800px" height="600px" id="tesseractload" src="https://c.tenor.com/wfEN4Vd_GYsAAAAM/loading.gif" alt="" hidden />
-						
 						
 						<div id="tesseracthide" >
 						<ImageEditor
@@ -281,8 +239,6 @@ const Home = () => {
 							onMousedown={handleMousedown}
 						/>
 						
-						
-						
 						<br />
 						
 						<label id="image-text">{fileText}</label>
@@ -302,45 +258,16 @@ const Home = () => {
 				</Dialog>
 			</div>
 					
-					<SearchImages searchValue={searchValue} />
-				</Grid>
+			<SearchImages searchValue={searchValue} />
+			</Grid>
 				<Grid item xs={2} md={10} lg={10} className='images'>
 					<Grid container className={classes.grid} spacing={3}>
 						{(imageCards.length > 0 )? imageCards : <h4> No Images to Display</h4>}
 					</Grid>
 				</Grid>
-      		</Grid>
+      </Grid>
 		);
 	}
-
-
-	// if(images.length !== 0) {
-	// 	let imageCards = images.map(image => (<ImageCard image={image} key={image.id} />));
-	// 	return (
-    //   <div>
-    //     <Grid container className={classes.grid} spacing={3}>
-    //           {imageCards}
-    //     </Grid>
-    //   </div>
-
-	// 		// <Grid container style={{width: '80%', margin: '0 auto'}}>
-	// 		// 	<Grid item xs={2} className='uploadImageForm'>
-	// 		// 		<form onSubmit={fileUploadHandler}>
-	// 		// 			<input type="text" name="imageName" onChange={event => console.log(event.target.value)} />
-	// 		// 			<input type="file" name="imageFile" onChange={event => console.log("File choosing")} />
-	// 		// 			<button type="submit"> Upload and Extract </button>
-	// 		// 		</form>
-    //   // 			</Grid>
-	// 		// 	<Grid item xs={10} className='uploadImageForm'>
-					
-	// 		// 	</Grid>
-	// 		// </Grid>
-	// 	);
-	// } else {
-		
-	
-	
-	
 };
 
 export default Home;
