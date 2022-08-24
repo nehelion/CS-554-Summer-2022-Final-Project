@@ -48,7 +48,8 @@ const Home = () => {
 		const loadImages = async () => {
 			if(!images || images.length === 0) {
 				try {
-					const imagesResponse = await axios.get(URLS.GET_ALL_IMAGES_URL);
+					const requestConfig = {headers: {user: await currentUser.getIdToken()}};
+					const imagesResponse = await axios.get(URLS.GET_ALL_IMAGES_URL, requestConfig);
 					if(imagesResponse) {
 						let {data} = imagesResponse;
 						setImages(data);
@@ -66,7 +67,8 @@ const Home = () => {
 	useEffect(() => {
 		const getSearchImages = async () => {
 			try{
-				const searchImagesResponse =  await axios.get(`${URLS.SEARCH_IMAGES_URL}?searchTerm=${searchTerm}`);
+				const requestConfig = {headers: {user: await currentUser.getIdToken()}};
+				const searchImagesResponse =  await axios.get(`${URLS.SEARCH_IMAGES_URL}?searchTerm=${searchTerm}`, requestConfig);
 				if(searchImagesResponse.status === 200) {
 					setSearchImages(searchImagesResponse.data);
 					setLoading(false);
@@ -115,7 +117,7 @@ const Home = () => {
 			method: "post",
 			url: 'http://localhost:3001/images/setImage', 
 			data: data,
-			headers: { "Content-Type": "multipart/form-data" },
+			headers: { "Content-Type": "multipart/form-data" , "user": await currentUser.getIdToken()},
 		})
 			.then((res) => {
 				console.log("File Upload success");

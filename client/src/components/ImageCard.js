@@ -1,10 +1,11 @@
 import '../App.css';
-import React, {useEffect, useState } from "react";
+import React, {useEffect, useState, useContext } from "react";
 import { Card, CardActionArea, CardContent, CardMedia, Grid, Typography, makeStyles } from '@material-ui/core';
 import {Link } from 'react-router-dom';
 import URLS from '../constants/constants';
 import {getCurrentUserName} from '../firebase/FirebaseFunctions';
 import axios from 'axios';
+import { AuthContext } from '../firebase/Auth';
 
 
 const useStyles = makeStyles({
@@ -45,10 +46,12 @@ const useStyles = makeStyles({
  */
 const ImageCard = (props) => {
     const classes = useStyles();
+
+    const {currentUser} = useContext(AuthContext);
     let image = props.image;
     let [editable, setEditable] = useState(false);
     let [amIOwner, setAmIOwner] = useState(false);
-    let [textExtracted, setTextExtracted] = useState("");
+    let [, setTextExtracted] = useState("");
 
     // only owner of the image is allowed to upload the text of the image
     useEffect(()=> {
@@ -62,12 +65,15 @@ const ImageCard = (props) => {
                 setAmIOwner(false);
         }
         checkIfImageCanBeEdited();
-    }, []);
+    }, [image.ownerMail]);
 
     let sendBackendCall = async (updateText) => {
         try {
             let requestConfig = {
-                    updateText: updateText
+                    updateText: updateText,
+                    headers: {
+                        user: await currentUser.getIdToken()
+                    }
             }
             let ans = await axios.post(`${URLS.UPDATE_TEXT_BY_IMAGE_ID}/${image._id}`, requestConfig);
             console.log("Updated Text updated in backend");
@@ -94,9 +100,9 @@ const ImageCard = (props) => {
                         <CardMedia
                             className={classes.media}
                             component='img'
-                            image={`${URLS.GET_IMAGE_URL}/${image.imageLink}`} // TODO: image object should have url property
+                            image={`${URLS.GET_IMAGE_URL}/download/${image.imageLink}`}
                             alt="No Image"
-                            title={image.imageLink} // TODO: image object should have a name 
+                            title={image.imageLink}
                         />
                     </Link>
                 </CardActionArea>

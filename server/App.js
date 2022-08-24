@@ -15,6 +15,30 @@ app.use(express.urlencoded({limit: '50mb', extended: true}));
 app.use(morgan('dev'));
 app.use('/images', static);
 
+// Firebase Token Verification from Backend
+const admin = require('firebase-admin');
+admin.initializeApp({
+  credential: admin.credential.cert(require('../firebase-private-key.json')),
+  projectId: 'cs554-6d42e'
+});
+async function decodeIDToken(req, res, next) {
+    if(req.headers && req.headers.user) {
+      const idToken = req.headers.user;
+      try {
+        const decodedToken = await admin.auth().verifyIdToken(idToken);
+        req['currentUser'] = decodedToken.name;
+      } catch (err) {
+        console.log(err);
+      }
+    } else {
+      return res.status(403).json("Unauthorized Error");
+    }
+  next();
+}
+
+// For all routes except the image download, token in the header is necessary for authentication
+app.use(!'/download/', decodeIDToken);
+
 // Apply Routes
 configRoutes(app);
 

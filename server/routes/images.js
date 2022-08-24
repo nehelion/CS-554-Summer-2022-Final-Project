@@ -158,7 +158,7 @@ router.post('/deleteImageByImageId/:id', async (req,res) =>{
 /**
  * Get Image by ImageLink
  */
-router.get('/:fileName', async (req,res) =>{
+router.get('/download/:fileName', async (req,res) =>{
 	const fileName = req.params['fileName'];
 	const filePath = path.join(__dirname, '../images', fileName);
 	try {
