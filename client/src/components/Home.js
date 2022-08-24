@@ -21,7 +21,10 @@ const useStyles = makeStyles({
     grid: {
         flexGrow: 1,
         flexDirection: 'row'
-    }
+    },
+		paper: { 
+			minWidth: "800px" 
+		},
 });
 
 var Tesseract = require('tesseract.js');
@@ -33,17 +36,21 @@ const path = require('path');
 const Jimp = require('jimp');
 
 const Home = () => {
+	const editorRef = React.createRef();
 	const classes = useStyles();
 	const [images, setImages] = useState([]);
 	const [searchTerm, setSearchTerm] = useState('');
 	const [searchImages, setSearchImages] = useState(null);
 	const [loading, setLoading] = useState(true);
   const [selectedFileBlob, setSelectedFileBlob] = useState(null);
+  const [selectedFileData, setSelectedFileData] = useState(null);
   const [selectedFile, setSelectedFile] = useState(null);
-  const [imagesData, setImagesData] = useState(null);
   const [imagesFiles, setImagesFiles] = useState(null);
   const [fileText, setFileText] = useState("Empty");
+  const [fileData, setDataText] = useState("Empty");
   const {currentUser} = useContext(AuthContext);
+	let theSelectedFile = null;
+	var imageEditor = null;
 	
 	useEffect(() => {
 		const loadImages = async () => {
@@ -84,7 +91,6 @@ const Home = () => {
 		}
 	}, [searchTerm]);
 
-
 	const fileUploadHandler =  (event) => {
 		event.preventDefault();
 		console.log("TEST" + event.target.imageFile.files[0]);
@@ -110,27 +116,6 @@ const Home = () => {
 		storeImageAtBackend();
 	}
 	
-	const onImageChange = (e) => {
-    const [file] = e.target.files;
-		
-		setSelectedFile(file);
-		
-		var passedVariable = file;
-		
-		Tesseract.recognize(passedVariable, 'eng',
-		{ 
-			logger: m => console.log(m) 
-		}).then(({ data: { text } }) => 
-		{
-			setFileText(text);
-		})
-		
-    setSelectedFileBlob(URL.createObjectURL(file));
-		
-		console.log("HERE -1: ", e.target);
-		console.log("HERE 0: ", URL.createObjectURL(file));
-  };
-	
 	const storage = multer.diskStorage(
 	{
 		dest: './images/',
@@ -150,13 +135,25 @@ const Home = () => {
 		}
 	});
 	
+	function dataURLtoFile(dataurl, filename) 
+	{
+		var arr = dataurl.split(','), mime = arr[0].match(/:(.*?);/)[1],
+				bstr = atob(arr[1]), n = bstr.length, u8arr = new Uint8Array(n);
+				while(n--){
+						u8arr[n] = bstr.charCodeAt(n);
+				}
+				return new File([u8arr], filename, {type:mime});
+	}
+	
 	const uploadText = async () => 
 	{
 		const data = new FormData();
 		
+		let imageObj = dataURLtoFile(fileData, "newfile.jpg");
+		
 		data.append("ownerMail", currentUser.email);
 		data.append("textExtracted", fileText);
-		data.append("file", selectedFile);
+		data.append("file", imageObj);
 		
 		axios({
 			method: "post",
@@ -169,12 +166,15 @@ const Home = () => {
 			})
 			.catch((err) => alert("File Upload Error"));
 	
+		setSelectedFile(null);
+		setSelectedFileBlob(null);
+		setSelectedFileData(null);
     setOpen(false);
 	};
 	
 	const [open, setOpen] = React.useState(false);
   
-  const handleClickOpen = () => {
+  const handleClickOpen = async () => {
     setOpen(true);
   };
   
@@ -196,8 +196,35 @@ const Home = () => {
 	const myTheme = {
 		// Theme object to extends default dark theme.
 	};
+	
+	const handleMousedown = () => {
+		
+		if(!imageEditor)
+		{
+			imageEditor = editorRef.current.getInstance()
+		}
+		
+		let file = imageEditor.toDataURL("image/jpg");
+			
+		var x = document.getElementById("tesseractload");
+		var y = document.getElementById("tesseracthide");
+			
+		x.style.display = "block";
+		y.style.display = "none";
+	 
+		Tesseract.recognize(file, 'eng',
+			{ 
+				logger: m => console.log(m) 
+			}).then(({ data: { text } }) => 
+			{
+				setFileText(text);
+				setDataText(file);
+				x.style.display = "none";
+				y.style.display = "block";
+			});
+  };
 
-
+//<input id="submitted_image" name="submitted_image" type="file" onChange={onImageChange} />
 	if(loading) {
 		return (
             <div>
@@ -214,7 +241,7 @@ const Home = () => {
 								color="primary" onClick={handleClickOpen}>
 					Upload
 				</Button>
-				<Dialog open={open} onClose={handleClose}>
+				<Dialog classes={{ paper : classes.paper}} open={open} onClose={handleClose}>
 					
 					
 					
@@ -224,40 +251,36 @@ const Home = () => {
 						Upload Image
 					</DialogTitle>
 					<form> 
-						<input id="submitted_image" name="submitted_image" type="file" onChange={onImageChange} />
-						
+					
 						<br />
 						
-						<img src={selectedFileBlob} alt="" />
+						<img width="800px" height="600px" id="tesseractload" src="https://c.tenor.com/wfEN4Vd_GYsAAAAM/loading.gif" alt="" hidden />
 						
 						
-						
-						
-						
-						
+						<div id="tesseracthide" >
 						<ImageEditor
-						includeUI={{
-							loadImage: {
-								path: {selectedFile},
-								name: 'SampleImage',
-							},
-							theme: myTheme,
-							menu: ['filter'],
-							initMenu: 'filter',
-							uiSize: {
-								width: '400px',
-								height: '400px',
-							},
-							menuBarPosition: 'bottom',
-						}}
-						cssMaxHeight={500}
-						cssMaxWidth={700}
-						selectionStyle={{
-							cornerSize: 20,
-							rotatingPointOffset: 70,
-						}}
-						usageStatistics={true}
-					/>
+							ref={editorRef}
+							id="imageEditor"
+							includeUI={{
+								theme: myTheme,
+								menu: ['filter'],
+								initMenu: 'filter',
+								uiSize: {
+									width: '800px',
+									height: '500px',
+								},
+								menuBarPosition: 'top',
+							}}
+							cssMaxHeight={500}
+							cssMaxWidth={700}
+							selectionStyle={{
+								cornerSize: 20,
+								rotatingPointOffset: 70,
+							}}
+							usageStatistics={true}
+							onMousedown={handleMousedown}
+						/>
+						
 						
 						
 						<br />
@@ -272,6 +295,9 @@ const Home = () => {
 								Submit
 							</Button>
 						</DialogActions>
+						
+						</div>
+						
 					</form>
 				</Dialog>
 			</div>

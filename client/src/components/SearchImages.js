@@ -14,7 +14,7 @@ const SearchImages = (props) => {
       className='center'
     >
       <label>
-        <span>Search Shows: </span>
+        <span>Search Images: </span>
         <input
           autoComplete='off'
           type='text'
