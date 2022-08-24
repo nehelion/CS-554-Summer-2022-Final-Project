@@ -65,7 +65,7 @@ const getOneUnapprovedImage = async () => {
   const imagesCollection = await getImagesCollection();
   let unApprovedImage = await imagesCollection.findOne({isApproved: false});
   if(unApprovedImage == null)
-    throw new Error(`Failed to Get Unapproved Images`);
+    return {};
   
   unApprovedImage._id = unApprovedImage._id.toString();
   return unApprovedImage;
