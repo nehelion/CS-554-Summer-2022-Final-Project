@@ -49,17 +49,17 @@ router.post('/setImage', async (req,res) => {
 	}
 });
 
-router.get('/getAllUnapprovedImages', async (req,res) =>{
+router.get('/getOneUnapprovedImage', async (req,res) =>{
 	try {
-		let unApprovedImages = await imagesData.getAllUnapprovedImages();
-		return res.status(200).json(unApprovedImages);
+		let unApprovedImage = await imagesData.getOneUnapprovedImage();
+		return res.status(200).json(unApprovedImage);
 	} catch(e) {
-		return res.status(500).json({"ERROR - getAllUnapprovedImages": e});
+		return res.status(500).json({"ERROR - getOneUnapprovedImage": e});
 	}
 });
 
-router.post('/approveImageByImageId/:id', async (req,res) =>{
-	let imageId = req.params['id'];
+router.post('/approveImageByImageId/', async (req,res) =>{
+	let imageId = req.body._id;
 	try {
 		imageId = validations.validateId(imageId, "Image Id");
 	} catch (e) {
@@ -137,8 +137,8 @@ router.post('/updateText/:id', async (req,res) =>{
 });
 
 
-router.post('/deleteImageByImageId/:id', async (req,res) =>{
-	let imageId = req.params['id'];
+router.post('/deleteImageByImageId', async (req,res) =>{
+	let imageId = req.body._id;
 	try {
 		imageId = validations.validateId(imageId, "Image Id");
 	} catch (e) {

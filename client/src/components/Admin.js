@@ -2,6 +2,7 @@ import React, {useState, useEffect,useContext} from 'react';
 import axios from 'axios';
 import {useParams } from "react-router-dom";
 import { AuthContext } from '../firebase/Auth';
+import URLS from '../constants/constants';
 // import { getAuth } from "../firebase/auth";
 import '../Image.css';
 
@@ -9,49 +10,45 @@ const Admin = () =>{
   const {currentUser} = useContext(AuthContext);
   const [imageInfo, setImageInfo] = useState(false)
   const [editable, setEditable] = useState(true)
-  const [ loading, setLoading ] = useState(true);
   const [ empty, setEmpty ] = useState(false);
+  const [ loading, setLoading ] = useState(true);
+  
+  /**
+   * Hard Coded Admin Checking as couldn't proceed with firebase authentication
+   */
   let admin = false
-
   const uid = currentUser.uid;
   if (uid === 'LE6VJ8K3PnZjoJVd8btEIc4kT3d2'){
     admin = true;
   }
 
-  useEffect(() => {
-    async function fetchData() {
-      try {
-        // if (currentUser){
-        //   const uid = JSON.stringif(currentUser.uid);
-        //   // let admin = await axios.post('http://localhost:3001/users/checkAdminFlagByid', {
-        //   //   _id:uid
-        //   // });
-        //   if (uid == 'LE6VJ8K3PnZjoJVd8btEIc4kT3d2'){
-        //      setAdmin(true);
-        //   } else{
-        //      setAdmin(false);
-        //   }
-        // }
-
-        const {data} = await axios.get('http://localhost:3001/images/getOneUnapprovedImage');
-        if (data.length === 0){
-          throw "No more images need to approve!"
-        }
-        setImageInfo(data)
-      } catch (e) {
-        setEmpty(true)
-        console.log(JSON.stringify(e.response.data));
+  async function fetchData() {
+    try {
+      const requestConfig = {headers: {user: await currentUser.getIdToken()}};
+      const {data} = await axios.get('http://localhost:3001/images/getOneUnapprovedImage', requestConfig);
+      if (data.length === 0){
+        throw "No more images need to approve!"
       }
-      setLoading(false);
+      setImageInfo(data)
+    } catch (e) {
+      setEmpty(true)
+      console.log(JSON.stringify(e.response.data));
     }
+    setLoading(false);
+  }
+
+  useEffect(() => {
     fetchData();
-  }, [imageInfo, currentUser]);
+  }, [currentUser]);
 
   const approveImage = async () =>{
     try{
       await axios.post('http://localhost:3001/images/approveImageByImageId',{
         _id: imageInfo._id,
+        headers: {user: await currentUser.getIdToken()}
       });
+      // setLoading(true);
+      fetchData();
     } catch(e){
       alert(JSON.stringify(e.response.data));
     }
@@ -61,23 +58,17 @@ const Admin = () =>{
     try{
       await axios.post('http://localhost:3001/images/deleteImageByImageId',{
         _id: imageInfo._id,
+        headers: {user: await currentUser.getIdToken()}
       });
+      // setLoading(true);
+      fetchData();
+
     } catch(e){
       alert(JSON.stringify(e.response.data));
     }
   }
   
-  if(!admin){
-    return (
-			<div>
-				<h2>Your are not admin!</h2>
-        <h2>Admin Account Email address:</h2>
-        <p>admin@test.com</p>
-        <h2>Admin Account Password:</h2>
-        <p>123456</p>
-			</div>
-		);
-  }else if(empty){
+ if(empty){
     return (
 			<div>
 				<h2>No more Image needs to approve...</h2>
@@ -99,7 +90,7 @@ const Admin = () =>{
       )
     }
     else{  
-      let imgUrl = imageInfo.url;
+      let imgUrl = `${URLS.GET_IMAGE_URL}/download/${imageInfo.imageLink}`
       return(
         <div>
           <div className='Image-body'>
@@ -108,7 +99,7 @@ const Admin = () =>{
               {/* <img src = {imageInfo.image} alt = "Image" /> */}
               <div className='Right-Top'>
                 <h1>{imageInfo&&imageInfo.tag}</h1>
-                <p>{imageInfo&&imageInfo.text}</p>
+                <p>{imageInfo&&imageInfo.textExtracted}</p>
               </div>
             </div>
 
