@@ -12,6 +12,7 @@ const UnprocessibleRequest = require('../errors/UnprocessibleRequest');
 const { deleteImageByImageId } = require('../data/images');
 let multer = require('multer');
 const helpers = require('./helpers');
+const { images } = require('../data');
 
 var storage = multer.diskStorage({
   destination: function(req, file, callback) 
@@ -26,22 +27,27 @@ var storage = multer.diskStorage({
 });
 var upload = multer({ storage: storage }).single('file');
 
-router.post('/setImage', async (req,res) => {
+router.post('/setImage', upload, async (req,res) => {
 	try 
 	{
-		upload(req, res, async (err) =>
-		{
-			let result = await imagesData.insertImage(req.body.ownerMail, req.file.filename, req.body.textExtracted);
+		let ownerMail = xss(req.body.ownerMail);
+		let filename = xss(req.file.filename);
+		let textExtracted = xss(req.body.textExtracted);
 
-			if(err) 
-			{
-				res.status(400).send("Something went wrong!");
-			}
-			else 
-			{
-				return res.status(200).json(result);
-			}
-		});
+		try {
+			ownerMail = validations.validateMail(ownerMail);
+			filename = validations.validateString(filename);
+			textExtracted = validations.validateString(textExtracted);
+		} catch(e) {
+			return res.status(400).json({"ERROR - setImage": e});
+		}
+
+		try {
+			let insertedImage = await imagesData.insertImage(ownerMail, filename, textExtracted);
+			return res.status(200).json(insertedImage);
+		} catch (e) {
+			return res.status(500).json({"ERROR - setUmage": e});
+		}
 	} 
 	catch (e) 
 	{
@@ -86,7 +92,7 @@ router.get('/getAllApprovedImages', async (req,res) =>{
 });
 
 router.get('/searchImages', async (req, res) => {
-	let searchTerm = req.query.searchTerm;
+	let searchTerm = xss(req.query.searchTerm);
 	try {
 		searchTerm = validations.validateString(searchTerm, "Search Term");
 	} catch (e) {
@@ -102,7 +108,7 @@ router.get('/searchImages', async (req, res) => {
 });
 
 router.get('/getImageByUserId/:id', async (req,res) =>{
-	let userId = req.params['id'];
+	let userId = xss(req.params['id']);
 	try {
 		userId = validations.validateId(userId, "Image Id");
 	} catch (e) {
@@ -119,7 +125,7 @@ router.get('/getImageByUserId/:id', async (req,res) =>{
 
 // Not sure if this is needed
 router.post('/updateText/:id', async (req,res) =>{
-	let imageId = req.params['id'];
+	let imageId = xss(req.params['id']);
 	let updateText = req.body.updateText;
 	try {
 		imageId = validations.validateId(imageId, "Image Id");
@@ -138,7 +144,7 @@ router.post('/updateText/:id', async (req,res) =>{
 
 
 router.post('/deleteImageByImageId', async (req,res) =>{
-	let imageId = req.body._id;
+	let imageId = xss(req.body._id);
 	try {
 		imageId = validations.validateId(imageId, "Image Id");
 	} catch (e) {
@@ -159,7 +165,7 @@ router.post('/deleteImageByImageId', async (req,res) =>{
  * Get Image by ImageLink
  */
 router.get('/download/:fileName', async (req,res) =>{
-	const fileName = req.params['fileName'];
+	const fileName = xss(req.params['fileName']);
 	const filePath = path.join(__dirname, '../images', fileName);
 	try {
 		if(fs.existsSync(filePath)) {
