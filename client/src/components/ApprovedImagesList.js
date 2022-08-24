@@ -102,7 +102,7 @@ const ApprovedImagesList = () =>{
       <Grid item xs={12} sm={6} md={4} lg={3} xl={2} key={data._id}>
         <Card className={classes.card} variant='outlined'>
           <Link to={`/ApprovedImage/${data._id}`}>
-          <img src={imgUrl}/>
+          {/* <img src={imgUrl}/> */}
             <CardMedia
               className={classes.media}
             //   component='img'
