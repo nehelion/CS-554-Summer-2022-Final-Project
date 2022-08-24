@@ -46,18 +46,29 @@ const insertImage = async (ownerMail, imageLink, textExtracted) => {
   return insertedImage;
 };
 
-/**
- * Get All UnApproved Images i.e., image Objects with isApproved = false
- */
-const getAllUnapprovedImages = async () => {
+
+const getOneUnapprovedImages = async () => {
   const imagesCollection = await getImagesCollection();
-  let unApprovedImages = await imagesCollection.find({isApproved: false}).toArray();
-  if(unApprovedImages == null)
+  let unApprovedImage = await imagesCollection.findOne({isApproved: false});
+  if(unApprovedImage == null)
     throw new Error(`Failed to Get Unapproved Images`);
   
   for(let i= 0; i < unApprovedImages.length; i++)
     unApprovedImages[i]._id = unApprovedImages[i]._id.toString();
   return unApprovedImages;
+};
+
+/**
+ * Get All UnApproved Images i.e., image Objects with isApproved = false
+ */
+const getOneUnapprovedImage = async () => {
+  const imagesCollection = await getImagesCollection();
+  let unApprovedImage = await imagesCollection.findOne({isApproved: false});
+  if(unApprovedImage == null)
+    throw new Error(`Failed to Get Unapproved Images`);
+  
+  unApprovedImage._id = unApprovedImage._id.toString();
+  return unApprovedImage;
 };
 
 /**
@@ -124,7 +135,7 @@ const approveImageByImageId = async (imageId) => {
   const imagesCollection = await getImagesCollection();
   let {value : approvedImage} = await imagesCollection.findOneAndUpdate(
     { _id:  imageId},
-    { isApproved: true},
+    { $set: {isApproved: true}},
     { upsert: false, returnNewDocument: true, returnDocument: 'after' }
   );
 
@@ -156,7 +167,7 @@ const updateTextbyImageId = async (imageId, updatedText) => {
 const deleteImageByImageId = async (imageId) => {
   imageId = validations.validateId(imageId, "Image Id");
   const imagesCollection = await getImagesCollection();
-  const imageObject = imagesCollection.findOne({_id: imageId});
+  const imageObject = await imagesCollection.findOne({_id: imageId});
   if(imageObject == null)
     throw new Error(`Couldn't find the object with Id - ${imageId}`);
   await imagesCollection.deleteOne({_id: imageId});
@@ -166,7 +177,8 @@ const deleteImageByImageId = async (imageId) => {
 
 module.exports = {
     insertImage,
-    getAllUnapprovedImages,
+    getOneUnapprovedImages,
+    getOneUnapprovedImage,
     getAllApprovedImages,
     getImageByImageId,
     getImagesByUserId,

@@ -15,13 +15,7 @@ const useStyles = makeStyles({
 
 const SignOutButton = () => 
 {
-	const classes = useStyles();
-
-  let handleSignOut = () => {
-    // Destroy the Firebase Session
-    doSignOut();
-  }
-
+  const classes = useStyles();
   return (
 		<div className={classes.centerWrap}>
 			<Button variant="outlined" onClick={doSignOut} color="primary">
