@@ -52,17 +52,17 @@
 }
 .navigation a:hover {
 	text-decoration: none;
-	color: red;
+	color: #cc0000;
 }
 
 .active {
 	font-weight: bold;
-	color: red !important;
+	color: #cc0000 !important;
 }
 
 .error {
 	font-weight: bold;
-	color: red !important;
+	color: #cc0000 !important;
 }
 
 .forgotPassword {
