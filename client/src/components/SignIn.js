@@ -49,7 +49,6 @@ function SignIn(){
               </Grid>
               <Grid item className='form-group' xs={12} sm={12}>
                 <button type='submit'> Log in </button>
-                <button className='forgotPassword' onClick={passwordReset}> Forgot Password </button>
               </Grid>
             </Grid>
         </form>

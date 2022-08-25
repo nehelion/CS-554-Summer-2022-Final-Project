@@ -67,14 +67,19 @@ const Admin = () =>{
       alert(JSON.stringify(e.response.data));
     }
   }
-  
- if(empty){
+
+  if(!admin) {
+    return (<div>
+      <h4>Only Admins can view this page...</h4>
+    </div>);
+  }
+ else if(empty){
     return (
 			<div>
 				<h2>No more Image needs to approve...</h2>
 			</div>
 		);
-  }else if(loading){
+  } else if(loading){
     return (
 			<div>
 				<h2>Loading...</h2>
