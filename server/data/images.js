@@ -118,7 +118,7 @@ const getImagesByUserId = async (userId) => {
 const getImagesWithText = async (searchTerm) => {
   searchTerm = validations.validateString(searchTerm);
   const imagesCollection = await getImagesCollection();
-  const searchImages = await imagesCollection.find({"textExtracted": {$regex: searchTerm, $options : 'i'}}).toArray();
+  const searchImages = await imagesCollection.find({"textExtracted": {$regex: searchTerm, $options : 'i'}, isApproved: true}).toArray();
   if(searchImages == null)
     throw new Error(`Failed to fetch Images with given Text`);
   for(let i = 0; i < searchImages.length; i++) {

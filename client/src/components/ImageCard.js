@@ -103,6 +103,7 @@ const ImageCard = (props) => {
                             image={`${URLS.GET_IMAGE_URL}/download/${image.imageLink}`}
                             alt="No Image"
                             title={image.imageLink}
+                            onClick={(e) => e.preventDefault()}
                         />
                     </Link>
                 </CardActionArea>
