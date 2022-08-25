@@ -26,10 +26,11 @@ const Admin = () =>{
     try {
       const requestConfig = {headers: {user: await currentUser.getIdToken()}};
       const {data} = await axios.get('http://localhost:3001/images/getOneUnapprovedImage', requestConfig);
-      if (data.length === 0){
-        throw "No more images need to approve!"
+      if (!data || !data._id){
+        setEmpty(true);
+      } else{
+        setImageInfo(data)
       }
-      setImageInfo(data)
     } catch (e) {
       setEmpty(true)
       console.log(JSON.stringify(e.response.data));
@@ -87,7 +88,7 @@ const Admin = () =>{
 		);
   }
   else{
-    if(imageInfo === undefined){
+    if(!imageInfo || !imageInfo._id){
       return(
         <div>
           <h1>Sorry, we cannot find this Image!</h1>
@@ -100,10 +101,9 @@ const Admin = () =>{
         <div>
           <div className='Image-body'>
             <div className='Top-Info'>
-            <img src={imgUrl}/>
-              {/* <img src = {imageInfo.image} alt = "Image" /> */}
+              <img src={imgUrl}/>
               <div className='Right-Top'>
-                <h1>{imageInfo&&imageInfo.tag}</h1>
+                <h1>{imageInfo&&imageInfo.ownerMail}</h1>
                 <p>{imageInfo&&imageInfo.textExtracted}</p>
               </div>
             </div>
